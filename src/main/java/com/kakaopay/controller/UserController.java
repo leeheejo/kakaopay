@@ -25,7 +25,7 @@ import com.kakaopay.utils.SHA256Util;
 
 @RestController
 public class UserController {
-	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	UserService userService;
