@@ -30,7 +30,7 @@ public class JWTUtils {
 //	public static String REFRESH_TOKEN_SECRET_KEY = "aWNvbnRyb2xzcmVmcmVzaDE3OTMhQCM=";
 
 	static public String generateToken(String id) throws UnsupportedEncodingException {
-		String secretKey = Constant.JWT_KEY;
+		String secretKey = Constant.getJwtKey();
 
 		Encoder encoder = Base64.getEncoder();
 
@@ -44,7 +44,7 @@ public class JWTUtils {
 
 	static public boolean validateToken(String token) throws UnsupportedEncodingException {
 
-		String secretKey = Constant.JWT_KEY;
+		String secretKey = Constant.getJwtKey();
 		logger.info("origin = " + token);
 		String[] tokens = token.split("\\.");
 		if (tokens.length != 3 || tokens[0] == null || tokens[1] == null || tokens[2] == null)

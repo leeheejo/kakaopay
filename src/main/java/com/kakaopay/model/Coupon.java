@@ -10,11 +10,13 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "coupon")
 @Getter
 @Setter
+@ToString
 public class Coupon extends BaseTimeEntity {
 
 	@Id
@@ -23,6 +25,7 @@ public class Coupon extends BaseTimeEntity {
 	private boolean isIssued = false;
 	private LocalDateTime issuedAt = null;
 	private LocalDateTime expiredAt = null;
+	private String userId = null;
 
 	public void setIssuedAt(LocalDateTime issuedAt) {
 		this.issuedAt = issuedAt;
@@ -37,12 +40,6 @@ public class Coupon extends BaseTimeEntity {
 	public Coupon(String coupon) {
 		super();
 		this.coupon = coupon;
-	}
-
-	@Override
-	public String toString() {
-		return "Coupon [coupon=" + coupon + ", isUsed=" + isUsed + ", isIssued=" + isIssued + ", issuedAt=" + issuedAt
-				+ ", createdAt=" + getCreatedAt() + "]";
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.kakaopay.utils;
+package com.kakaopay.aop;
 
 import java.io.UnsupportedEncodingException;
 
@@ -14,6 +14,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.kakaopay.exeption.InvalidTokenException;
+import com.kakaopay.utils.JWTUtils;
 
 @Component
 @Aspect
@@ -25,7 +26,7 @@ public class HeaderCheck {
 		logger.info("tokenCheck()실행");
 	}
 
-	@Before("execution(* com.kakaopay.controller.*.*(..))")
+	@Before("within(com.kakaopay.controller.MainController)")
 	public void beforeMethod() throws InvalidTokenException, UnsupportedEncodingException {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 				.getRequest();
