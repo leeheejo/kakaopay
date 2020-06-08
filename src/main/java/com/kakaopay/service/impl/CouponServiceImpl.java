@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kakaopay.exeption.ExpiredCouponException;
+import com.kakaopay.exeption.InvalidTokenException;
 import com.kakaopay.model.Coupon;
 import com.kakaopay.repo.CouponRepository;
 import com.kakaopay.service.CouponService;
@@ -78,6 +79,7 @@ public class CouponServiceImpl implements CouponService {
 	public void changeUseCoupon(String coupon, boolean currentUseStatus) throws ExpiredCouponException {
 		// currentUseStatus == true : 취소 처리 currentUseStatus == false면 사용처리
 		Coupon c = couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, currentUseStatus);
+
 		if (c == null)
 			throw new EntityNotFoundException("Invalid Coupon");
 

@@ -25,7 +25,6 @@ public class Coupon extends BaseTimeEntity {
 	private boolean isIssued = false;
 	private LocalDateTime issuedAt = null;
 	private LocalDateTime expiredAt = null;
-	private String userId = null;
 
 	public void setIssuedAt(LocalDateTime issuedAt) {
 		this.issuedAt = issuedAt;

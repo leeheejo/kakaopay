@@ -23,7 +23,6 @@ public class HeaderCheck {
 
 	@Pointcut("execution(* com.kakaopay.controller.*.*(..))")
 	public void tokenCheck() {
-		logger.info("tokenCheck()실행");
 	}
 
 	@Before("within(com.kakaopay.controller.MainController)")
@@ -31,10 +30,8 @@ public class HeaderCheck {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 				.getRequest();
 		String token = request.getHeader("Authorization");
-		JWTUtils jwtUtils = new JWTUtils();
-		if (!jwtUtils.validateToken(token))
+		if (!JWTUtils.validateToken(token))
 			throw new InvalidTokenException();
-		logger.info("beforeMethod()실행");
 	}
 
 }

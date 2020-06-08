@@ -77,64 +77,17 @@ public class JWTUtils {
 		return false;
 
 	}
-//
-//	static public JWTInfo getJWTInfoFromToken(String token) {
-//
-//		Decoder decoder = Base64.getDecoder();
-//		String enPayload = token.split("\\.")[1];
-//		String dePayload = new String(decoder.decode(enPayload));
-//		logger.info("P= " + enPayload);
-//		JSONObject obj = new JSONObject(dePayload);
-//
-//		JWTInfo jwtInfo = new JWTInfo();
-//		jwtInfo.setCmpIp(obj.get("cmpIp").toString());
-//		jwtInfo.setHomeId(obj.get("homeId").toString());
-//		jwtInfo.setClientInfo(obj.get("clientInfo").toString());
-//
-//		return jwtInfo;
-//	}
-//
-//	static public String getCmpIpFromToken(String token) {
-//
-//		Decoder decoder = Base64.getDecoder();
-//		String enPayload = token.split("\\.")[1];
-//		String dePayload = new String(decoder.decode(enPayload));
-//		logger.info("P= " + enPayload);
-//		JSONObject obj = new JSONObject(dePayload);
-//
-//		String cmpIp = obj.get("cmpIp").toString();
-//		Decoder dcoder = Base64.getDecoder();
-//		cmpIp = new String(decoder.decode(cmpIp));
-//
-//		return cmpIp;
-//	}
-//
-//	static public String getHomeIdFromToken(String token)
-//			throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
-//
-//		Decoder decoder = Base64.getDecoder();
-//		String enPayload = token.split("\\.")[1];
-//		String dePayload = new String(decoder.decode(enPayload));
-//		JSONObject obj = new JSONObject(dePayload);
-//
-//		String encodedHomeId = obj.get("homeId").toString();
-//		AES256Util aes = new AES256Util();
-//		String homeId = aes.decrypt(encodedHomeId);
-//
-//		return homeId;
-//	}
-//
-//	static public String getClientInfoFromToken(String token)
-//			throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
-//
-//		Decoder decoder = Base64.getDecoder();
-//		String enPayload = token.split("\\.")[1];
-//		String dePayload = new String(decoder.decode(enPayload));
-//		JSONObject obj = new JSONObject(dePayload);
-//
-//		String clientInfo = obj.get("clientInfo").toString();
-//
-//		return clientInfo;
-//	}
+
+	static public String getUserIdFromToken(String token) {
+
+		Decoder decoder = Base64.getDecoder();
+		String enPayload = token.split("\\.")[1];
+		String dePayload = new String(decoder.decode(enPayload));
+		logger.info("P= " + enPayload);
+		JSONObject obj = new JSONObject(dePayload);
+
+		String userId = obj.get("userID").toString();
+		return userId;
+	}
 
 }

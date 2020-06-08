@@ -42,6 +42,8 @@ public class MainControllerTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
+	private static String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1OTIwMCwidXNlcklkIjoiWkVkV2VtUkZiR3M9IiwiaWF0IjoxNTkxNTczMDgwfQ.9lxDVmTIdgNfIN--_Fu8_vYbM8FtGR6Ie1QQAuRR65g";
+
 	@Before
 	public void init() {
 		if (setUpFlag) {
@@ -60,6 +62,8 @@ public class MainControllerTests {
 	public void generateCoupon() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.add("Authorization", token);
+		System.out.println(headers.toString());
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
 		ResponseEntity<String> response = restTemplate.postForEntity("/coupon/10", request, String.class);
@@ -71,6 +75,7 @@ public class MainControllerTests {
 	public void issueCoupon() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
 		ResponseEntity<ReturnCouponNum> response = restTemplate.exchange("/coupon/issue", HttpMethod.PUT, request,
@@ -81,7 +86,13 @@ public class MainControllerTests {
 
 	@Test
 	public void findIssuedCoupon() throws Exception {
-		ResponseEntity<ReturnCouponList> response = restTemplate.getForEntity("/coupon/issue", ReturnCouponList.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.add("Authorization", token);
+		Map<String, String> map = new HashMap<>();
+		HttpEntity<Map<String, String>> request = new HttpEntity<>(headers);
+		ResponseEntity<ReturnCouponList> response = restTemplate.exchange("/coupon/issue", HttpMethod.GET, request,
+				ReturnCouponList.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		System.out.println(response.getBody().toString());
 		assertThat(response.getBody().getTotalCount()).isGreaterThanOrEqualTo(1);
@@ -91,6 +102,7 @@ public class MainControllerTests {
 	public void useCoupon() throws Exception {
 		String couponNumForTest = couponService.issueCoupon();
 		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", token);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		Map<String, String> map = new HashMap<>();
 		map.put("coupon", couponNumForTest);
@@ -106,6 +118,7 @@ public class MainControllerTests {
 		couponService.changeUseCoupon(couponNumForTest, false);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		map.put("coupon", couponNumForTest);
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
@@ -117,7 +130,13 @@ public class MainControllerTests {
 
 	@Test
 	public void findExpireTodayCoupon() throws Exception {
-		ResponseEntity<ReturnCouponList> response = restTemplate.getForEntity("/coupon/expire", ReturnCouponList.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.add("Authorization", token);
+		Map<String, String> map = new HashMap<>();
+		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
+		ResponseEntity<ReturnCouponList> response = restTemplate.exchange("/coupon/expire", HttpMethod.GET, request,
+				ReturnCouponList.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody().getTotalCount()).isEqualTo(0);
 		List<Coupon> coupons = response.getBody().getCoupons();
