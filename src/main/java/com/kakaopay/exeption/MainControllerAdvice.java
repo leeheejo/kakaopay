@@ -55,4 +55,11 @@ public class MainControllerAdvice {
 		ReturnMessage msg = ReturnMessage.builder().message("Expired Coupon").build();
 		return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@ExceptionHandler(InvalidTokenException.class)
+	public Object processValidationError(InvalidTokenException ex) {
+		logger.info(ex.getMessage());
+		ReturnMessage msg = ReturnMessage.builder().message("Invalid Token").build();
+		return new ResponseEntity<>(msg, HttpStatus.UNAUTHORIZED);
+	}
 }

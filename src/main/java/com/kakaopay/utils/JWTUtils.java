@@ -46,8 +46,8 @@ public class JWTUtils {
 
 		String secretKey = Constant.JWT_KEY;
 		logger.info("origin = " + token);
-
-		if (token.split("\\.")[0] == null || token.split("\\.")[1] == null || token.split("\\.")[2] == null)
+		String[] tokens = token.split("\\.");
+		if (tokens.length != 3 || tokens[0] == null || tokens[1] == null || tokens[2] == null)
 			return false;
 
 		Decoder decoder = Base64.getDecoder();
