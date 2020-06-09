@@ -43,7 +43,7 @@ public class Logging {
 
 	@Around("within(com.kakaopay.service.impl.*)")
 	public Object doSubLogging(ProceedingJoinPoint pjp) throws Throwable {
-		logger.debug("Call Service: {}",
+		logger.info("Call Service: {}",
 				pjp.getSignature().getDeclaringTypeName() + ". " + pjp.getSignature().getName());
 		return pjp.proceed(pjp.getArgs());
 	}
