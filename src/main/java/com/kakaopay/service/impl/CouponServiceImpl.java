@@ -47,7 +47,6 @@ public class CouponServiceImpl implements CouponService {
 					sameCount--;
 				}
 			}
-			logger.info(res.toString());
 		} while (sameCount != 0);
 
 	}
@@ -64,7 +63,6 @@ public class CouponServiceImpl implements CouponService {
 		coupon.setIssued(true);
 		coupon.setIssuedAt(LocalDateTime.now());
 		couponRepo.save(coupon);
-		logger.info(coupon.toString());
 		return coupon.getCoupon();
 	}
 
@@ -99,7 +97,6 @@ public class CouponServiceImpl implements CouponService {
 		logger.info(start.toString() + " " + end.toString());
 		boolean useStatus = false;
 		List<Coupon> expiredToday = couponRepo.findByExpiredAtBetweenAndIsUsed(start, end, useStatus);
-		logger.info(expiredToday.toString());
 		return expiredToday;
 	}
 

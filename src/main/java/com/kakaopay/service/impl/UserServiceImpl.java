@@ -25,8 +25,6 @@ public class UserServiceImpl implements UserService {
 		String encryptedPass = SHA256Util.encrypt(userInfo.getPassword());
 		User user = new User(userInfo.getUserId(), encryptedPass);
 		if (userRepo.findOneByUserId(user.getUserId()) != null) {
-			System.out.println(user.getUserId());
-			System.out.println(userRepo.findOneByUserId(user.getUserId()).toString());
 			throw new InvalidUserException(Constant.RES.USERID_ALREADY_USED.getMessage());
 		}
 

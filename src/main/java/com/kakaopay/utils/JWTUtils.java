@@ -24,11 +24,6 @@ public class JWTUtils {
 		super();
 	}
 
-//	// icontrols1793!@# base64인코딩하고앞에 난수(dlswmd) 붙임
-//	public static String ACCESS_TOEKN_SECRET_KEY = "dlswmdaWNvbnRyb2xzMTc5MyFAIw==";
-//	// icontrolsrefresh1793!@#
-//	public static String REFRESH_TOKEN_SECRET_KEY = "aWNvbnRyb2xzcmVmcmVzaDE3OTMhQCM=";
-
 	static public String generateToken(String id) throws UnsupportedEncodingException {
 		String secretKey = Constant.getJwtKey();
 
@@ -45,7 +40,6 @@ public class JWTUtils {
 	static public boolean validateToken(String token) throws UnsupportedEncodingException {
 
 		String secretKey = Constant.getJwtKey();
-		logger.info("origin = " + token);
 		String[] tokens = token.split("\\.");
 		if (tokens.length != 3 || tokens[0] == null || tokens[1] == null || tokens[2] == null)
 			return false;
@@ -60,11 +54,9 @@ public class JWTUtils {
 		if (obj.isNull("userId") || obj.isNull("iat") || obj.isNull("exp"))
 			return false;
 
-		String jwt = Jwts.builder().claim("exp", obj.get("exp")) // 1시간 -> 설정정보로 변경해야함
-				.claim("userId", obj.get("userId")).claim("iat", obj.get("iat"))
-				.signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8")).compact();
+		String jwt = Jwts.builder().claim("exp", obj.get("exp")).claim("userId", obj.get("userId"))
+				.claim("iat", obj.get("iat")).signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8")).compact();
 
-		logger.info("new = " + jwt);
 		if (token.equals(jwt)) {
 			long exp = Long.parseLong(obj.get("exp").toString());
 			long currentTime = System.currentTimeMillis();
@@ -83,7 +75,6 @@ public class JWTUtils {
 		Decoder decoder = Base64.getDecoder();
 		String enPayload = token.split("\\.")[1];
 		String dePayload = new String(decoder.decode(enPayload));
-		logger.info("P= " + enPayload);
 		JSONObject obj = new JSONObject(dePayload);
 
 		String userId = obj.get("userID").toString();
