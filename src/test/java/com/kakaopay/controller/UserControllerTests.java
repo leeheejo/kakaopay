@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.kakaopay.exeption.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.repo.UserRepository;
-import com.kakaopay.response.ReturnToken;
+import com.kakaopay.response.TokenDTO;
 import com.kakaopay.service.UserService;
 import com.kakaopay.utils.JWTUtils;
 
@@ -60,7 +60,7 @@ public class UserControllerTests {
 		map.put("userId", id);
 		map.put("password", pass);
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
-		ResponseEntity<ReturnToken> response = restTemplate.postForEntity("/user/signup", request, ReturnToken.class);
+		ResponseEntity<TokenDTO> response = restTemplate.postForEntity("/user/signup", request, TokenDTO.class);
 		System.out.println(response.getStatusCode());
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(JWTUtils.validateToken(response.getBody().getToken())).isEqualTo(true);
@@ -78,7 +78,7 @@ public class UserControllerTests {
 		map.put("userId", id);
 		map.put("password", pass);
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
-		ResponseEntity<ReturnToken> response = restTemplate.postForEntity("/user/signin", request, ReturnToken.class);
+		ResponseEntity<TokenDTO> response = restTemplate.postForEntity("/user/signin", request, TokenDTO.class);
 		System.out.println(response.getStatusCode());
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(JWTUtils.validateToken(response.getBody().getToken())).isEqualTo(true);

@@ -27,8 +27,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.kakaopay.model.Coupon;
 import com.kakaopay.repo.CouponRepository;
-import com.kakaopay.response.ReturnCouponList;
-import com.kakaopay.response.ReturnCouponNum;
+import com.kakaopay.response.CouponListDTO;
+import com.kakaopay.response.ReturnDefault;
 import com.kakaopay.service.CouponService;
 
 @RunWith(SpringRunner.class)
@@ -78,8 +78,8 @@ public class MainControllerTests {
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
-		ResponseEntity<ReturnCouponNum> response = restTemplate.exchange("/coupon/issue", HttpMethod.PUT, request,
-				ReturnCouponNum.class);
+		ResponseEntity<ReturnDefault> response = restTemplate.exchange("/coupon/issue", HttpMethod.PUT, request,
+				ReturnDefault.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody().getClass()).isNotNull();
 	}
@@ -91,8 +91,8 @@ public class MainControllerTests {
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(headers);
-		ResponseEntity<ReturnCouponList> response = restTemplate.exchange("/coupon/issue", HttpMethod.GET, request,
-				ReturnCouponList.class);
+		ResponseEntity<CouponListDTO> response = restTemplate.exchange("/coupon/issue", HttpMethod.GET, request,
+				CouponListDTO.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		System.out.println(response.getBody().toString());
 		assertThat(response.getBody().getTotalCount()).isGreaterThanOrEqualTo(1);
@@ -135,8 +135,8 @@ public class MainControllerTests {
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
-		ResponseEntity<ReturnCouponList> response = restTemplate.exchange("/coupon/expire", HttpMethod.GET, request,
-				ReturnCouponList.class);
+		ResponseEntity<CouponListDTO> response = restTemplate.exchange("/coupon/expire", HttpMethod.GET, request,
+				CouponListDTO.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody().getTotalCount()).isEqualTo(0);
 		List<Coupon> coupons = response.getBody().getCoupons();

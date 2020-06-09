@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kakaopay.constant.Constant;
 import com.kakaopay.exeption.ExpiredCouponException;
 import com.kakaopay.exeption.InvalidTokenException;
 import com.kakaopay.model.Coupon;
@@ -58,7 +59,7 @@ public class CouponServiceImpl implements CouponService {
 		Coupon coupon = couponRepo.findTop1ByIsIssued(false);
 
 		if (coupon == null)
-			throw new EntityNotFoundException("No Coupon to Issue");
+			throw new EntityNotFoundException(Constant.RES.NO_COUPON.getMessage());
 
 		coupon.setIssued(true);
 		coupon.setIssuedAt(LocalDateTime.now());
@@ -81,10 +82,10 @@ public class CouponServiceImpl implements CouponService {
 		Coupon c = couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, currentUseStatus);
 
 		if (c == null)
-			throw new EntityNotFoundException("Invalid Coupon");
+			throw new EntityNotFoundException(Constant.RES.INVALID_COUPON.getMessage());
 
 		if (c.getExpiredAt().isBefore(LocalDateTime.now()))
-			throw new ExpiredCouponException("Expired Coupon");
+			throw new ExpiredCouponException(Constant.RES.EXPIRED_COUPON.getMessage());
 
 		c.setUsed(!currentUseStatus);
 		couponRepo.save(c);

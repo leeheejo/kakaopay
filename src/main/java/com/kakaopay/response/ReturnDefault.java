@@ -7,16 +7,18 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReturnMessage {
+public class ReturnDefault {
 
 	private int code;
 	private String message;
+	private Object result;
 
 	@Builder
-	public ReturnMessage(int code, String message) {
+	public ReturnDefault(int code, String message, Object result) {
 		super();
 		this.code = code;
 		this.message = message;
+		this.result = result;
 	}
 
 }

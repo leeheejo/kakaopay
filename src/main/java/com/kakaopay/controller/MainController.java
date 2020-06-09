@@ -23,10 +23,12 @@ import com.kakaopay.constant.Constant;
 import com.kakaopay.exeption.ExpiredCouponException;
 import com.kakaopay.model.Coupon;
 import com.kakaopay.request.RequestCouponDefault;
-import com.kakaopay.response.ReturnCouponNum;
-import com.kakaopay.response.ReturnCouponList;
+import com.kakaopay.response.ReturnDefault;
+import com.kakaopay.response.CouponDTO;
+import com.kakaopay.response.CouponListDTO;
 import com.kakaopay.response.ReturnMessage;
 import com.kakaopay.service.CouponService;
+import com.mysql.cj.protocol.Message;
 
 @RestController
 public class MainController {
@@ -37,32 +39,33 @@ public class MainController {
 	@PostMapping(value = "/coupon/{N}")
 	public @ResponseBody ResponseEntity<Object> generateCoupon(@RequestHeader HttpHeaders headers,
 			@PathVariable Long N) {
-		logger.info(headers.toString());
-		logger.info(N.toString());
 		couponService.generateCoupon(N);
 
-		ReturnMessage msg = ReturnMessage.builder().message(Constant.STATUS_OK).build();
+		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
+				.message(Constant.RES.STATUS_OK.getMessage()).build();
 
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/coupon/issue")
 	public @ResponseBody ResponseEntity<Object> issueCoupon(@RequestHeader HttpHeaders headers) {
-		logger.info(headers.toString());
+
 		String couponNum = couponService.issueCoupon();
 		if (couponNum.equals("")) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
-			ReturnCouponNum msg = ReturnCouponNum.builder().coupon(couponNum).build();
+			ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
+					.message(Constant.RES.STATUS_OK.getMessage()).result(new CouponDTO(couponNum)).build();
 			return new ResponseEntity<>(msg, HttpStatus.OK);
 		}
 	}
 
 	@GetMapping(value = "/coupon/issue")
 	public @ResponseBody ResponseEntity<Object> findIssuedCoupon(@RequestHeader HttpHeaders headers) {
-		logger.info(headers.toString());
+
 		List<Coupon> issuedCoupon = couponService.findIssuedCoupon();
-		ReturnCouponList msg = ReturnCouponList.builder().coupons(issuedCoupon).build();
+		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
+				.message(Constant.RES.STATUS_OK.getMessage()).result(new CouponListDTO(issuedCoupon)).build();
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
@@ -71,7 +74,8 @@ public class MainController {
 			final @Valid @RequestBody RequestCouponDefault coupon) throws ExpiredCouponException {
 		boolean currentUseStatue = false;
 		couponService.changeUseCoupon(coupon.getCoupon(), currentUseStatue);
-		ReturnMessage msg = ReturnMessage.builder().message(Constant.STATUS_OK).build();
+		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
+				.message(Constant.RES.STATUS_OK.getMessage()).build();
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
@@ -80,15 +84,17 @@ public class MainController {
 			final @Valid @RequestBody RequestCouponDefault coupon) throws ExpiredCouponException {
 		boolean currentUseStatue = true;
 		couponService.changeUseCoupon(coupon.getCoupon(), currentUseStatue);
-		ReturnMessage msg = ReturnMessage.builder().message(Constant.STATUS_OK).build();
+		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
+				.message(Constant.RES.STATUS_OK.getMessage()).build();
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/coupon/expire")
 	public @ResponseBody ResponseEntity<Object> findExpireTodayCoupon(@RequestHeader HttpHeaders headers) {
-		logger.info(headers.toString());
+
 		List<Coupon> issuedCoupon = couponService.getExpireTodayCoupon();
-		ReturnCouponList msg = ReturnCouponList.builder().coupons(issuedCoupon).build();
+		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
+				.message(Constant.RES.STATUS_OK.getMessage()).result(new CouponListDTO(issuedCoupon)).build();
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 

@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReturnCouponList {
+public class CouponListDTO {
 
 	private int totalCount;
 	private List<Coupon> coupons;
 
 	@Builder
-	public ReturnCouponList(List<Coupon> coupons) {
+	public CouponListDTO(List<Coupon> coupons) {
 		super();
 		this.totalCount = coupons.size();
 		this.coupons = coupons;

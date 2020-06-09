@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReturnToken {
+public class TokenDTO {
 	private String token;
 
 	@Builder
-	public ReturnToken(String token) {
+	public TokenDTO(String token) {
 		super();
 		this.token = token;
 	}

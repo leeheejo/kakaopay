@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kakaopay.constant.Constant;
 import com.kakaopay.exeption.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.request.RequestUserDefault;
-import com.kakaopay.response.ReturnToken;
+import com.kakaopay.response.CouponListDTO;
+import com.kakaopay.response.ReturnDefault;
+import com.kakaopay.response.TokenDTO;
 import com.kakaopay.service.UserService;
 import com.kakaopay.utils.SHA256Util;
 
@@ -37,8 +40,9 @@ public class UserController {
 		logger.info(user.toString());
 		User userInfo = new User(user.getUserId(), user.getPassword());
 		String token = userService.signUpUser(userInfo);
-		ReturnToken returnToken = new ReturnToken(token);
-		return new ResponseEntity<>(returnToken, HttpStatus.OK);
+		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
+				.message(Constant.RES.STATUS_OK.getMessage()).result(new TokenDTO(token)).build();
+		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/user/signin")
@@ -48,7 +52,8 @@ public class UserController {
 		User userInfo = new User(user.getUserId(), user.getPassword());
 		// 패스워드 검사
 		String token = userService.signInUser(userInfo);
-		ReturnToken returnToken = new ReturnToken(token);
-		return new ResponseEntity<>(returnToken, HttpStatus.OK);
+		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
+				.message(Constant.RES.STATUS_OK.getMessage()).result(new TokenDTO(token)).build();
+		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 }

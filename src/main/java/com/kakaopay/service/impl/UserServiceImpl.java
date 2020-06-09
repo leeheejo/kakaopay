@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kakaopay.constant.Constant;
 import com.kakaopay.exeption.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.repo.UserRepository;
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
 		String encryptedPass = SHA256Util.encrypt(userInfo.getPassword());
 		User user = new User(userInfo.getUserId(), encryptedPass);
 		if (userRepo.findOneByUserId(user.getUserId()) != null)
-			throw new InvalidUserException("UserId already Used");
+			throw new InvalidUserException(Constant.RES.USERID_ALREADY_USED.getMessage());
 
 		user = userRepo.save(user);
 
@@ -36,11 +37,11 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		User user = userRepo.findOneByUserId(userInfo.getUserId());
 		if (user == null)
-			throw new InvalidUserException("UserId is not exist");
+			throw new InvalidUserException(Constant.RES.USERID_NOT_EXIST.getMessage());
 
 		String encryptedPass = SHA256Util.encrypt(userInfo.getPassword());
 		if (!encryptedPass.equals(user.getPassword()))
-			throw new InvalidUserException("Password is incorrect");
+			throw new InvalidUserException(Constant.RES.INCORRECT_PASSWORD.getMessage());
 
 		return JWTUtils.generateToken(user.getUserId());
 	}
