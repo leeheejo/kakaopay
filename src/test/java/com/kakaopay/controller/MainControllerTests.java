@@ -42,7 +42,8 @@ public class MainControllerTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
-	private static String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjI1OTIwMCwidXNlcklkIjoiWkVkV2VtUkZiR3M9IiwiaWF0IjoxNTkxNTczMDgwfQ.9lxDVmTIdgNfIN--_Fu8_vYbM8FtGR6Ie1QQAuRR65g";
+	//7월 9일까지 테스트용 토큰 발급
+	private static String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTQyNzQ5NjksInVzZXJJZCI6IlpFZFdlbVJGYkd0T1ZGa3oiLCJpYXQiOjE1OTE2ODI3OTMyMjB9.U2fBICMxqVXedM2BQwhFZ_jClGVBqAPg5z4YrYVvK4o";
 
 	@Before
 	public void init() {
@@ -91,11 +92,11 @@ public class MainControllerTests {
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(headers);
-		ResponseEntity<CouponListDTO> response = restTemplate.exchange("/coupon/issue", HttpMethod.GET, request,
-				CouponListDTO.class);
+		ResponseEntity<ReturnDefault> response = restTemplate.exchange("/coupon/issue", HttpMethod.GET, request,
+				ReturnDefault.class);
+		assertThat(response.getBody().getResult()).isNotNull();
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		System.out.println(response.getBody().toString());
-		assertThat(response.getBody().getTotalCount()).isGreaterThanOrEqualTo(1);
+		assertThat(response.getBody().getResult()).isNotNull();
 	}
 
 	@Test
@@ -135,15 +136,9 @@ public class MainControllerTests {
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
-		ResponseEntity<CouponListDTO> response = restTemplate.exchange("/coupon/expire", HttpMethod.GET, request,
-				CouponListDTO.class);
+		ResponseEntity<ReturnDefault> response = restTemplate.exchange("/coupon/expire", HttpMethod.GET, request,
+				ReturnDefault.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(response.getBody().getTotalCount()).isEqualTo(0);
-		List<Coupon> coupons = response.getBody().getCoupons();
-		for (Coupon c : coupons) {
-			assertThat(c.getExpiredAt().isAfter(LocalDate.now().atStartOfDay()));
-			assertThat(c.getExpiredAt().isBefore(LocalDate.now().atTime(LocalTime.MAX)));
-		}
+		assertThat(response.getBody().getResult()).isNotNull();
 	}
-
 }

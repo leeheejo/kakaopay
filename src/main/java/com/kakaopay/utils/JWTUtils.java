@@ -34,8 +34,8 @@ public class JWTUtils {
 
 		Encoder encoder = Base64.getEncoder();
 
-		String jwt = Jwts.builder().setExpiration(new Date(259200000)) // 1일 -> 설정정보로 변경해야함
-				.claim("userId", encoder.encode(id.getBytes())).claim("iat", System.currentTimeMillis() / 1000)
+		String jwt = Jwts.builder().setExpiration(new Date(System.currentTimeMillis() + (3600000)))
+				.claim("userId", encoder.encode(id.getBytes())).claim("iat", System.currentTimeMillis())
 				.signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8")).compact();
 		System.out.println(jwt);
 
@@ -66,9 +66,9 @@ public class JWTUtils {
 
 		logger.info("new = " + jwt);
 		if (token.equals(jwt)) {
-			long iat = Long.parseLong(obj.get("iat").toString());
-			long currentTime = System.currentTimeMillis() / 1000;
-			if (currentTime > iat + Long.parseLong(obj.get("exp").toString())) {
+			long exp = Long.parseLong(obj.get("exp").toString());
+			long currentTime = System.currentTimeMillis();
+			if (currentTime > exp * 1000) {
 				return false;
 			}
 			return true;
