@@ -24,8 +24,8 @@ $ cd target
 $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 </code></pre>
 
-#### http://localhost:8001 로 실행된다. 
-#### Database는 http://localhost:8001/h2-console 접속해서 확인할 수 있으며 접속정보는 아래와 같다.
+#### `http://localhost:8001` 로 실행된다. 
+#### Database는 `http://localhost:8001/h2-console` 접속해서 확인할 수 있으며 접속정보는 아래와 같다.
 	* JDBC URL: jdbc:h2:mem:testdb
 	* user name: sa
 	* password: 
@@ -50,7 +50,31 @@ POST /coupon/{N}
 
 #### - 문제해결 전략 
 * `MainController`에 `@PostMapping(value = "/coupon/{N}")`를 생성하고 파라미터에 `@PathVariable Long N`을 추가해 N을 input으로 받도록 함. 
-
+* `com.kakaopay.service.CouponService`의 `generateCoupon(Long N)` 매소드가 로직을 처리한다.
+* 쿠폰을 발급하고 DB에 저장되는 로직은 다음과 같다. 
+	* N개 만큼 쿠폰을 발급해 `List<Coupont>`에 담는다. 
+	* `List<Coupon>`을 JPA의 `saveAll()`을 통해 DB에 저장한다. 
+		* Coupon 번호가 Coupon테이블의 Key로 사용되고 있기 때문에 번호가 같은 경우 DB에 저장되지 않는다. 20자리 난수 String을 발급하기 때문에 경우의 수는 적지만 혹시나 쿠폰번호가 겹쳐 input N개만큼 쿠폰을 발급하지 못하는 경우를 다음과 같이 처리했다. 
+			* Coupon의 `create_at`을 확인하여 저장되지 않은 개수를 체크하고 다시 쿠폰을 발급하고 저장한다. 
+			* 저장되지 않는 경우, `create_at` 가 null인 점을 활용했다. 
+	<pre><code>
+			Long sameCount = N;
+		do {
+			List<Coupon> test = new ArrayList<>();
+			for (int i = 0; i < sameCount; i++) {
+				test.add(new Coupon(createCouponNum()));
+			}
+			List<Coupon> res = new ArrayList<>();
+			res = couponRepo.saveAll(test);
+			for (Coupon c : res) {
+				if (c.getCreatedAt() != null) {
+					sameCount--;
+				}
+			}
+		} while (sameCount != 0);
+	</pre></code>
+* 쿠폰번호 발급은 다음과 같은 절차로 진행된다 
+	* 
 
 ### 3.2 생성된 쿠폰중 하나를 사용자에게 지급하는 API를 구현하세요. (output : 쿠폰번호(XXXXX-XXXXXX-XXXXXXXX))
 #### - REQUEST
