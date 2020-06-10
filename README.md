@@ -339,17 +339,6 @@ POST /user/signin
 	</pre></code>
 	* 위의 조건을 모두 만족한 경우, `com.kakaopay.utils.JWTUtils` 의 `generateToken(id)`를 통해 토큰을 발급한다. 
 		
-
-<<<<<<< HEAD
-
-# 4. 문제해결 전략 
-
-### 4.1 쿠폰발급 
-### 4.2 로깅 
-### 4.3 JWT토큰 발급 
-### 4.4 토큰 검사 
-### 4.5 패스워드 저장 
-=======
 ### 3.10 그외 문제해결 전략
 #### 3.10.1 로깅 
 * AOP를 통해 공통적으로 로깅을 처리한다. 
@@ -395,4 +384,3 @@ POST /user/signin
 	INCORRECT_PASSWORD(92, "Password is incorrect"),
 	FAIL(91, "Something wrong");
 	</pre></code>
->>>>>>> e030c7da1473cf05ea48fa0f17f7d94f5a21513c
