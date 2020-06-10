@@ -3,8 +3,7 @@ Rest API 기반 쿠폰시스템
 # 0. 목차
 * 개발환경 
 * 빌드 및 실행방법
-* 기능 요구사항
-* 문제해결 전략 
+* 기능 요구사항 및 문제해결 전략 
 
 # 1. 개발환경 
 * JAVA8 
@@ -31,9 +30,9 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 	* user name: sa
 	* password: 
 	
-# 3. 기능 요구사항 
+# 3. 기능 요구사항 및 문제해결 전략 
 ## 필수사항 
-#### 필수사항의 모든 요청은 헤더에 Authorization에 <strong>3.8 signup 계정생성 API<strong> 혹은 <strong>3.9 signin 로그인 API<strong> 에서 발급 받 유효한 토큰을 가져야 한다. 
+#### 필수사항의 모든 요청은 헤더에 Authorization에 _3.8 signup 계정생성 API_ 혹은 _3.9 signin 로그인 API_에서 발급 받 유효한 토큰을 가져야 한다. 
 
 ### 3.1 랜덤한 코드의 쿠폰을 N개 생성하여 데이터베이스에 보관하는 API를 구현하세요.(input : N) 
 #### - REQUEST
@@ -48,6 +47,10 @@ POST /coupon/{N}
     "message": "OK"
 }
 </pre></code>
+
+#### - 문제해결 전략 
+* `MainController`에 `@PostMapping(value = "/coupon/{N}")`를 생성하고 파라미터에 `@PathVariable Long N`을 추가해 N을 input으로 받도록 함. 
+
 
 ### 3.2 생성된 쿠폰중 하나를 사용자에게 지급하는 API를 구현하세요. (output : 쿠폰번호(XXXXX-XXXXXX-XXXXXXXX))
 #### - REQUEST
@@ -200,12 +203,3 @@ POST /user/signin
 }
 </pre></code>
 
-
-
-# 4. 문제해결 전략 
-
-## 쿠폰발급 
-## 로깅 
-## JWT토큰 발급 
-## 토큰 검사 
-## 패스워드 저장 
