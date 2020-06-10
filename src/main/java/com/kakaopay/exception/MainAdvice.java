@@ -46,7 +46,7 @@ public class MainAdvice {
 
 		} else {
 			statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-			if (ex.getMessage().equals(Constant.RES.INVALID_COUPON.getMessage())) {
+			if (ex.getMessage().equals(Constant.RES.NO_COUPON.getMessage())) {
 				msg = ReturnMessage.builder().code(Constant.RES.NO_COUPON.getCode())
 						.message(Constant.RES.NO_COUPON.getMessage()).build();
 			} else {

@@ -30,7 +30,7 @@ public class HeaderCheck {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 				.getRequest();
 		String token = request.getHeader("Authorization");
-		if (!JWTUtils.validateToken(token))
+		if (token == null || !JWTUtils.validateToken(token))
 			throw new InvalidTokenException();
 	}
 

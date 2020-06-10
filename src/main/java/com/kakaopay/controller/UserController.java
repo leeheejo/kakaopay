@@ -41,8 +41,7 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/user/signin")
-	public @ResponseBody ResponseEntity<Object> signIn(@RequestHeader HttpHeaders headers,
-			final @Valid @RequestBody RequestUserDefault user)
+	public @ResponseBody ResponseEntity<Object> signIn(final @Valid @RequestBody RequestUserDefault user)
 			throws InvalidUserException, UnsupportedEncodingException {
 		User userInfo = new User(user.getUserId(), user.getPassword());
 		// 패스워드 검사

@@ -46,7 +46,7 @@ public class MainController {
 	}
 
 	@PutMapping(value = "/coupon/issue")
-	public @ResponseBody ResponseEntity<Object> issueCoupon(@RequestHeader HttpHeaders headers) {
+	public @ResponseBody ResponseEntity<Object> issueCoupon() {
 
 		String couponNum = couponService.issueCoupon();
 		if (couponNum.equals("")) {
@@ -59,7 +59,7 @@ public class MainController {
 	}
 
 	@GetMapping(value = "/coupon/issue")
-	public @ResponseBody ResponseEntity<Object> findIssuedCoupon(@RequestHeader HttpHeaders headers) {
+	public @ResponseBody ResponseEntity<Object> findIssuedCoupon() {
 
 		List<Coupon> issuedCoupon = couponService.findIssuedCoupon();
 		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
@@ -68,8 +68,8 @@ public class MainController {
 	}
 
 	@PutMapping(value = "/coupon/use")
-	public @ResponseBody ResponseEntity<Object> useCoupon(@RequestHeader HttpHeaders headers,
-			final @Valid @RequestBody RequestCouponDefault coupon) throws ExpiredCouponException {
+	public @ResponseBody ResponseEntity<Object> useCoupon(final @Valid @RequestBody RequestCouponDefault coupon)
+			throws ExpiredCouponException {
 		boolean currentUseStatue = false;
 		couponService.changeUseCoupon(coupon.getCoupon(), currentUseStatue);
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
@@ -78,8 +78,8 @@ public class MainController {
 	}
 
 	@PutMapping(value = "/coupon/cancel")
-	public @ResponseBody ResponseEntity<Object> cancelCoupon(@RequestHeader HttpHeaders headers,
-			final @Valid @RequestBody RequestCouponDefault coupon) throws ExpiredCouponException {
+	public @ResponseBody ResponseEntity<Object> cancelCoupon(final @Valid @RequestBody RequestCouponDefault coupon)
+			throws ExpiredCouponException {
 		boolean currentUseStatue = true;
 		couponService.changeUseCoupon(coupon.getCoupon(), currentUseStatue);
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
@@ -88,7 +88,7 @@ public class MainController {
 	}
 
 	@GetMapping(value = "/coupon/expire")
-	public @ResponseBody ResponseEntity<Object> findExpireTodayCoupon(@RequestHeader HttpHeaders headers) {
+	public @ResponseBody ResponseEntity<Object> findExpireTodayCoupon() {
 
 		List<Coupon> issuedCoupon = couponService.getExpireTodayCoupon();
 		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())

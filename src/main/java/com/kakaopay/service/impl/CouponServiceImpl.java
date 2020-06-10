@@ -34,12 +34,12 @@ public class CouponServiceImpl implements CouponService {
 		// TODO Auto-generated method stub
 		Long sameCount = N;
 		do {
-			List<Coupon> test = new ArrayList<>();
+			List<Coupon> list = new ArrayList<>();
 			for (int i = 0; i < sameCount; i++) {
-				test.add(new Coupon(createCouponNum()));
+				list.add(new Coupon(createCouponNum()));
 			}
 			List<Coupon> res = new ArrayList<>();
-			res = couponRepo.saveAll(test);
+			res = couponRepo.saveAll(list);
 			for (Coupon c : res) {
 				if (c.getCreatedAt() != null) {
 					sameCount--;

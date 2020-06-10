@@ -22,11 +22,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String signUpUser(User userInfo) throws InvalidUserException, UnsupportedEncodingException {
 		// TODO Auto-generated method stub
-		String encryptedPass = SHA256Util.encrypt(userInfo.getPassword());
-		User user = new User(userInfo.getUserId(), encryptedPass);
-		if (userRepo.findOneByUserId(user.getUserId()) != null) {
+
+		if (userRepo.findOneByUserId(userInfo.getUserId()) != null) {
 			throw new InvalidUserException(Constant.RES.USERID_ALREADY_USED.getMessage());
 		}
+
+		String encryptedPass = SHA256Util.encrypt(userInfo.getPassword());
+		User user = new User(userInfo.getUserId(), encryptedPass);
 
 		user = userRepo.save(user);
 

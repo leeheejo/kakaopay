@@ -23,4 +23,9 @@ public class ReturnDefault {
 		this.result = result;
 	}
 
+	@Override
+	public String toString() {
+		return "ReturnDefault [code=" + code + ", message=" + message + ", result=" + result.toString() + "]";
+	}
+
 }
