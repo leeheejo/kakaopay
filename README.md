@@ -25,6 +25,12 @@ $ cd target
 $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 </code></pre>
 
+#### http://localhost:8001 로 실행된다. 
+#### Database는 http://localhost:8001/h2-console 접속해서 확인할 수 있으며 접속정보는 아래와 같다.
+	* JDBC URL: jdbc:h2:mem:testdb
+	* user name: sa
+	* password: 
+	
 # 3. 기능 요구사항 
 ## 필수사항 
 #### 필수사항의 모든 요청은 헤더에 Authorization에 (())에서 발급 받 유효한 토큰을 가져야 한다. 
