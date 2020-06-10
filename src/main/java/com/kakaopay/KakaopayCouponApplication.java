@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableJpaAuditing
 @EnableAspectJAutoProxy
-@EnableScheduling
 @SpringBootApplication
+@EnableScheduling
 public class KakaopayCouponApplication {
 
 	public static void main(String[] args) {

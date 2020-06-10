@@ -39,6 +39,9 @@ public class JWTUtils {
 
 	static public boolean validateToken(String token) throws UnsupportedEncodingException {
 
+		if (token == null)
+			return false;
+
 		String secretKey = Constant.getJwtKey();
 		String[] tokens = token.split("\\.");
 		if (tokens.length != 3 || tokens[0] == null || tokens[1] == null || tokens[2] == null)
@@ -56,7 +59,8 @@ public class JWTUtils {
 
 		String jwt = Jwts.builder().claim("exp", obj.get("exp")).claim("userId", obj.get("userId"))
 				.claim("iat", obj.get("iat")).signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8")).compact();
-
+		
+		//TODO: 사용자 아이디가 존재하는지 검사해야한다. 
 		if (token.equals(jwt)) {
 			long exp = Long.parseLong(obj.get("exp").toString());
 			long currentTime = System.currentTimeMillis();
