@@ -155,7 +155,7 @@ PUT /coupon/use
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* JPA의 `couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용은 하지 않은 쿠폰)
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
 	* 해당 조건에 일치하는 쿠폰이 있는 경우에는 만료기간 검사를 한다. 이미 만료된 경우에는 아래와 같이 리턴한다. 
@@ -195,7 +195,7 @@ PUT /coupon/cancel
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* JPA의 `couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
+	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용한 쿠폰)
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
 	* 해당 조건에 일치하는 쿠폰이 있는 경우에는 만료기간 검사를 한다. 이미 만료된 경우에는 아래와 같이 리턴한다.
@@ -282,7 +282,7 @@ POST /user/signup
 * `UserController`에 `@PostMapping(value = "/user/signup")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
 * `com.kakaopay.service.UserService`의 `signUpUser()` 매소드가 로직을 처리한다.
 * sign up을 처리하는 로직은 다음과 같다. 
-	* JPA의 `userRepo.findOneByUserId(id)`를 통해 아이디 중복 검사를 진행한다. 만약 이미 사용되고 있는 아이디인 경우 아래와 같이 리턴한다.
+	* JPA의 `findOneByUserId(id)`를 통해 아이디 중복 검사를 진행한다. 만약 이미 사용되고 있는 아이디인 경우 아래와 같이 리턴한다.
 	<pre><code>
 	{
     		"code": 93,
@@ -290,7 +290,7 @@ POST /user/signup
 	}
 	</pre></code>
 	* 패스워드를 `SHA256`암호화 방식을 통해 암호화 한다. 
-	* 암호화한 패스워드와 입력받은 아이디를 JPA의 `userRepo.save(user)`를 통해 저장한다. 
+	* 암호화한 패스워드와 입력받은 아이디를 JPA의 `save(user)`를 통해 저장한다. 
 	* `com.kakaopay.utils.JWTUtils` 의 `generateToken(id)`를 통해 토큰을 발급한다. 
 		* payload를 생성하고, private key를 만들어 서명을 생성한다. 
 		* payload 구조
@@ -322,7 +322,7 @@ POST /user/signin
 * `UserController`에 `@PostMapping(value = "/user/signin")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
 * `com.kakaopay.service.UserService`의 `signInUser()` 매소드가 로직을 처리한다.
 * sign in을 처리하는 로직은 다음과 같다. 
-	* JPA의 `userRepo.findOneByUserId(id)`를 통해 해당 아이디의 사용자가 있는지 먼저 검사한다. 없는 아이디인 경우 다음과 같이 리턴한다. 
+	* JPA의 `findOneByUserId(id)`를 통해 해당 아이디의 사용자가 있는지 먼저 검사한다. 없는 아이디인 경우 다음과 같이 리턴한다. 
 	<pre><code>
 	{
 	    "code": 95,
@@ -330,7 +330,7 @@ POST /user/signin
 	}
 	</pre></code>
 	* 입력받은 아이디의 사용자가 있는 경우, 입력받은 패스워드를 `SHA256`암호화 방식을 통해 암호화 한다. 
-	* `userRepo.findOneByUserId(id)`를 통해 찾은 사용자의 비밀번호와 입력 받은 패스워드의 암호화 값이 동일한지 검사한다. 동일하지 않은 경우 다음과 같이 리턴한다. 
+	* `findOneByUserId(id)`를 통해 찾은 사용자의 비밀번호와 입력 받은 패스워드의 암호화 값이 동일한지 검사한다. 동일하지 않은 경우 다음과 같이 리턴한다. 
 	<pre><code>
 	{
 	    "code": 92,
@@ -342,6 +342,41 @@ POST /user/signin
 
 ### 3.10 그외 문제해결 전략
 #### 3.10.1 로깅 
+* AOP를 통해 공통적으로 로깅을 처리한다. 
+	* `com.kakaopay.aop.Logging`에서 프로젝트 전반적인 로깅을 담당한다. 
+	* Request 수신 시 다음과 같이 출력한다.
+	<pre><code>
+	Request: POST /user/signin < 0:0:0:0:0:0:0:1 
+	</pre></code>
+	* Request 리턴 시 다음과 같이 출력한다.
+	<pre><code>
+	Response Code: 200
+	Response Body: ReturnDefault [code=200, message=OK, result=TokenDTO(token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTE3OTc2MjQsInVzZXJJZCI6IlpFZFdlbVJGYkdzPSIsImlhdCI6MTU5MTc5NDAyNDM1MH0.-SmxSZbBVUAbTEYvdDc7UoHLPFKZm-mQPhmnGYV_SDI)]
+	</pre></code>
+	* 서비스 클래스 호출시 다음과 같이 출력한다. 
+	<pre><code>
+	Call Service: com.kakaopay.service.impl.UserServiceImpl.signUpUser
+	</pre></code>
+	
 #### 3.10.2 헤더체크 
+* AOP를 통해 공통적으로 헤더체크를 처리한다. 
+	* `com.kakaopay.aop.HeaderCheck`에서 모든 Request의 전에 헤더를 검사한다. 
+	* 헤더의 Authorization에 토큰이 있는지, 유효한지 검사한다. 헤더가 유효하지 않은 경우 아래와 같이 리턴한다. 
+	<pre><code>
+	{
+		"code": 97,
+		"message": "Invalid Token"
+	}
+	</pre></code>
+	
 #### 3.10.3 예외처리
-
+* `com.kakaopay.exception.MainAdvice` 에서 예외처리를 관리한다. 
+* 발생할 수 있는 예외 별로 어떤 HTTP Status Code와 메시지를 리턴할지 정의하고, 예외 발생 시 이에 따라 리턴한다. 
+* 예외 메시지와 예외 코드는 com.kakaopay.constant.Constant.RES에 공통으로 정의했다. 정의되어 있는 예외 코드는 다음과 같다. 
+	<pre><code>
+		STATUS_OK(200, "OK"), INVALID_REQUESTBODY(99, "Invalid RequestBody"), INVALID_COUPON(98, "Invalid Coupon"),
+		INVALID_TOKEN(97, "Invalid Token"), EXPIRED_COUPON(96, "Expired Coupon"),
+		USERID_NOT_EXIST(95, "UserId is not exist"), NO_COUPON(94, "No Coupon to Issue"),
+		USERID_ALREADY_USED(93, "UserId already Used"), INCORRECT_PASSWORD(92, "Password is incorrect"),
+		FAIL(91, "Something wrong");
+	</pre></code>
