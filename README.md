@@ -32,7 +32,7 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 	
 # 3. 기능 요구사항 및 문제해결 전략 
 ## 필수사항 
-#### 필수사항의 모든 요청은 헤더에 Authorization에 _3.8 signup 계정생성 API_ 혹은 _3.9 signin 로그인 API_에서 발급 받 유효한 토큰을 가져야 한다. 
+#### 필수사항의 모든 요청은 헤더에 Authorization에 _3.8 signup 계정생성 API_ 혹은 _3.9 signin 로그인 API_ 에서 발급 받 유효한 토큰을 가져야 한다. 
 
 ### 3.1 랜덤한 코드의 쿠폰을 N개 생성하여 데이터베이스에 보관하는 API를 구현하세요.(input : N) 
 #### - REQUEST
@@ -278,6 +278,30 @@ POST /user/signup
 }
 </pre></code>
 
+#### - 문제해결 전략 
+* `UserController`에 `@PostMapping(value = "/user/signup")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
+* `com.kakaopay.service.UserService`의 `signUpUser()` 매소드가 로직을 처리한다.
+* sign up을 처리하는 로직은 다음과 같다. 
+	* JPA의 `userRepo.findOneByUserId(id)`를 통해 아이디 중복 검사를 진행한다. 만약 이미 사용되고 있는 아이디인 경우 아래와 같이 리턴한다.
+	<pre><code>
+	{
+    		"code": 93,
+    		"message": "UserId already Used"
+	}
+	</pre></code>
+	* 패스워드를 `SHA256`암호화 방식을 통해 암호화 한다. 
+	* 암호화한 패스워드와 입력받은 아이디를 JPA의 `userRepo.save(user)`를 통해 저장한다. 
+	* `com.kakaopay.utils.JWTUtils` 의 `generateToken(id)`를 통해 토큰을 발급한다. 
+		* payload를 생성하고, private key를 만들어 서명을 생성한다. 
+		* payload 구조
+		<pre><code>
+		{
+  			"exp": 만료시간,
+  			"userId": 아이디를 인코딩한 값,
+  			"iat": 발급시간
+		}
+		</pre></code>
+		
 ### 3.9 signin 로그인 API: 입력으로 생성된 계정 (ID, PW)으로 로그인 요청하면 토큰을 발급한다.
 #### - REQUEST
 <pre><code>
@@ -294,4 +318,30 @@ POST /user/signin
     }
 }
 </pre></code>
+
+* `UserController`에 `@PostMapping(value = "/user/signin")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
+* `com.kakaopay.service.UserService`의 `signInUser()` 매소드가 로직을 처리한다.
+* sign in을 처리하는 로직은 다음과 같다. 
+	* JPA의 `userRepo.findOneByUserId(id)`를 통해 해당 아이디의 사용자가 있는지 먼저 검사한다. 없는 아이디인 경우 다음과 같이 리턴한다. 
+	<pre><code>
+	{
+	    "code": 95,
+	    "message": "UserId is not exist"
+	}
+	</pre></code>
+	* 입력받은 아이디의 사용자가 있는 경우, 입력받은 패스워드를 `SHA256`암호화 방식을 통해 암호화 한다. 
+	* `userRepo.findOneByUserId(id)`를 통해 찾은 사용자의 비밀번호와 입력 받은 패스워드의 암호화 값이 동일한지 검사한다. 동일하지 않은 경우 다음과 같이 리턴한다. 
+	<pre><code>
+	{
+	    "code": 92,
+	    "message": "Password is incorrect"
+	}
+	</pre></code>
+	* 위의 조건을 모두 만족한 경우, `com.kakaopay.utils.JWTUtils` 의 `generateToken(id)`를 통해 토큰을 발급한다. 
+		
+
+### 3.10 그외 문제해결 전략
+#### 3.10.1 로깅 
+#### 3.10.2 헤더체크 
+#### 3.10.3 예외처리
 
