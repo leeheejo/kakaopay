@@ -49,32 +49,19 @@ POST /coupon/{N}
 </pre></code>
 
 #### - 문제해결 전략 
-* `MainController`에 `@PostMapping(value = "/coupon/{N}")`를 생성하고 파라미터에 `@PathVariable Long N`을 추가해 N을 input으로 받도록 함. 
+* `MainController`에 `@PostMapping(value = "/coupon/{N}")`를 생성하고 파라미터에 `@PathVariable Long N`을 추가해 N을 input으로 받도록 했다. 
 * `com.kakaopay.service.CouponService`의 `generateCoupon(Long N)` 매소드가 로직을 처리한다.
 * 쿠폰을 발급하고 DB에 저장되는 로직은 다음과 같다. 
-	* N개 만큼 쿠폰을 발급해 `List<Coupont>`에 담는다. 
-	* `List<Coupon>`을 JPA의 `saveAll()`을 통해 DB에 저장한다. 
+	* N개 만큼 쿠폰을 발급해 `List<Coupont> list`에 담는다. 
+	* `List<Coupon> list`을 JPA의 `saveAll(list)`을 통해 DB에 저장한다. 
 		* Coupon 번호가 Coupon테이블의 Key로 사용되고 있기 때문에 번호가 같은 경우 DB에 저장되지 않는다. 20자리 난수 String을 발급하기 때문에 경우의 수는 적지만 혹시나 쿠폰번호가 겹쳐 input N개만큼 쿠폰을 발급하지 못하는 경우를 다음과 같이 처리했다. 
 			* Coupon의 `create_at`을 확인하여 저장되지 않은 개수를 체크하고 다시 쿠폰을 발급하고 저장한다. 
 			* 저장되지 않는 경우, `create_at` 가 null인 점을 활용했다. 
-	<pre><code>
-			Long sameCount = N;
-		do {
-			List<Coupon> test = new ArrayList<>();
-			for (int i = 0; i < sameCount; i++) {
-				test.add(new Coupon(createCouponNum()));
-			}
-			List<Coupon> res = new ArrayList<>();
-			res = couponRepo.saveAll(test);
-			for (Coupon c : res) {
-				if (c.getCreatedAt() != null) {
-					sameCount--;
-				}
-			}
-		} while (sameCount != 0);
-	</pre></code>
 * 쿠폰번호 발급은 다음과 같은 절차로 진행된다 
-	* 
+	* 20자리 대문자, 소문자, 숫자로 구성된 난수 String을 발급한다. 
+	* 각 자리의 문자열을 생성할 때, 쿠폰들의 숫자와 문자의 위치가 동일하지 않도록 먼저 1~3사이의 난수를 발급한다. 
+	이에따라 0: 소문자 1: 대문자 2:숫자가 각각 랜덤하게 발급되게 한다. 
+	* 생성 과정에서는 메모리를 고려해 `StringBuffer`를 활용했다. 
 
 ### 3.2 생성된 쿠폰중 하나를 사용자에게 지급하는 API를 구현하세요. (output : 쿠폰번호(XXXXX-XXXXXX-XXXXXXXX))
 #### - REQUEST
@@ -93,6 +80,20 @@ PUT /coupon/issue
 }
 </pre></code>
 
+#### - 문제해결 전략 
+* `MainController`에 `@PutMapping(value = "/coupon/issue")`를 생성한다. 
+* `com.kakaopay.service.CouponService`의 `issueCoupon()` 매소드가 로직을 처리한다.
+* 쿠폰을 발급하는 로직은 아래와 같다.  
+	* JPA의 `findTop1ByIsIssued(false)`을 통해 발급되지 않은 쿠폰 중 하나를 찾는다.
+	* 해당 Coupon의 `is_issued`를 true로, `issued_at`를 발급시간으로 값을 변경한다. 
+	* 생성되어 있는 쿠폰이 없는 경우에는 다음과 같은 응답을 리턴한다. 
+	<pre><code>
+	{
+    		"code": 94,
+    		"message": "No Coupon to Issue"
+	}
+	</pre></code>
+	
 ### 3.3 사용자에게 지급된 쿠폰을 조회하는 API를 구현하세요.
 #### - REQUEST
 <pre><code>
@@ -120,6 +121,12 @@ GET /coupon/issue
 }
 </pre></code>
 
+#### - 문제해결 전략 
+* `MainController`에 `@GetMapping(value = "/coupon/issue")`를 생성한다. 
+* `com.kakaopay.service.CouponService`의 `findIssuedCoupon()` 매소드가 로직을 처리한다.
+* 발급된 쿠폰을 찾는 로직은 다음과 같다. 
+	* JPA의 `findByIsIssued(true)`를 통해 발급된 쿠폰들을 찾는다. 
+	
 ### 3.4 지급된 쿠폰중 하나를 사용하는 API를 구현하세요. (쿠폰 재사용은 불가) (input : 쿠폰번호)
 #### - REQUEST
 <pre><code>
@@ -137,6 +144,29 @@ PUT /coupon/use
 }
 </pre></code>
 
+#### - 문제해결 전략 
+* `MainController`에 `@PutMapping(value = "/coupon/use")`를 생성하고, `final @Valid @RequestBody RequestCouponDefault coupon`을 추가해 request body의 유효성을 미리 검사한다. 
+	* 유효하지 않는 경우 아래와 같이 리턴한다. 
+	<pre><code>
+	{
+    		"code": 98,
+    		"message": "Invalid Coupon"
+	}
+	</pre></code>
+* `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
+* 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
+	* JPA의 `couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용은 하지 않은 쿠폰)
+	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
+	* 해당 조건에 일치하는 쿠폰이 있는 경우에는 만료기간 검사를 한다. 이미 만료된 경우에는 아래와 같이 리턴한다. 
+	<pre><code>
+	{
+    		"code": 96,
+    		"message": "Expired Coupon"
+	}
+	</pre></code>
+	* 모든 조건 검사를 통과하면 Coupon의 `is_used`를 true로 변경한다. 
+	
 ### 3.5 지급된 쿠폰중 하나를 사용 취소하는 API를 구현하세요. (취소된 쿠폰 재사용 가능) (input : 쿠폰번호)
 #### - REQUEST
 <pre><code>
@@ -153,6 +183,29 @@ PUT /coupon/cancel
     "message": "OK"
 }
 </pre></code>
+
+#### - 문제해결 전략 
+* `MainController`에 `@PutMapping(value = "/coupon/cancel")`를 생성하고, `final @Valid @RequestBody RequestCouponDefault coupon`을 추가해 request body의 유효성을 미리 검사한다. 
+	* 유효하지 않는 경우 아래와 같이 리턴한다. 
+	<pre><code>
+	{
+    		"code": 98,
+    		"message": "Invalid Coupon"
+	}
+	</pre></code>
+* `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
+* 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
+	* JPA의 `couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
+	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용한 쿠폰)
+	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
+	* 해당 조건에 일치하는 쿠폰이 있는 경우에는 만료기간 검사를 한다. 이미 만료된 경우에는 아래와 같이 리턴한다.
+	<pre><code>
+	{
+    		"code": 96,
+    		"message": "Expired Coupon"
+	}
+	</pre></code>
+* 모든 조건 검사를 통과하면 Coupon의 `is_used`를 false로 변경한다. 
 
 ### 3.6 발급된 쿠폰중 당일 만료된 전체 쿠폰 목록을 조회하는 API를 구현하세요.
 #### - REQUEST
@@ -181,6 +234,12 @@ GET /coupon/expire
 }
 </pre></code>
 
+#### - 문제해결 전략 
+* `MainController`에 `@GetMapping(value = "/coupon/expire")`를 생성한다. 
+* `com.kakaopay.service.CouponService`의 `getExpireTodayCoupon()` 매소드가 로직을 처리한다.
+* 당일 만료하는 쿠폰을 찾는 로직은 아래와 같다. 
+	* JPA의 `findByExpiredAtBetweenAndIsUsed(start, end, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	(만료 시간이 당일 00:00:00 ~ 당일 23:59:59 사이에 있고 사용하지 않은 쿠폰) 
 
 ## 선택문제
 
@@ -190,6 +249,15 @@ GET /coupon/expire
 <pre><code>
 [4945jW73jEFMEed2lX52] 쿠폰이 3일 후 만료됩니다.
 </pre></code>
+
+#### - 문제해결 전략 
+* 스케쥴러를 등록해 매일 00시 00분 00초에 실행 만료 쿠폰 검사를 실행한다. 
+* `com.kakaopay.KakaopayCouponApplication`에 `@EnableScheduling` 어노테이션 추가한다. 
+* `com.kakaopay.Scheduler`를 `@Component`로 등록하고 그 안에 `@Scheduled(cron = "0 0 0 * * * ")`를 생성한다. 
+* 3일 안에 만료하는 쿠폰을 찾는 로직은 다음과 같다. 
+	* JPA의 `findByExpiredAtBetweenAndIsUsed(start, end, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	(만료 시간이 당일 00:00:00 ~ 3일후 23:59:59 사이에 있고 사용하지 않은 쿠폰) 
+
 
 ## 제약사항(선택)
 
