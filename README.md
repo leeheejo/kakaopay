@@ -374,9 +374,14 @@ POST /user/signin
 * 발생할 수 있는 예외 별로 어떤 HTTP Status Code와 메시지를 리턴할지 정의하고, 예외 발생 시 이에 따라 리턴한다. 
 * 예외 메시지와 예외 코드는 com.kakaopay.constant.Constant.RES에 공통으로 정의했다. 정의되어 있는 예외 코드는 다음과 같다. 
 	<pre><code>
-		STATUS_OK(200, "OK"), INVALID_REQUESTBODY(99, "Invalid RequestBody"), INVALID_COUPON(98, "Invalid Coupon"),
-		INVALID_TOKEN(97, "Invalid Token"), EXPIRED_COUPON(96, "Expired Coupon"),
-		USERID_NOT_EXIST(95, "UserId is not exist"), NO_COUPON(94, "No Coupon to Issue"),
-		USERID_ALREADY_USED(93, "UserId already Used"), INCORRECT_PASSWORD(92, "Password is incorrect"),
-		FAIL(91, "Something wrong");
+	STATUS_OK(200, "OK"), 
+	INVALID_REQUESTBODY(99, "Invalid RequestBody"), 
+	INVALID_COUPON(98, "Invalid Coupon"),
+	INVALID_TOKEN(97, "Invalid Token"), 
+	EXPIRED_COUPON(96, "Expired Coupon"),
+	USERID_NOT_EXIST(95, "UserId is not exist"), 
+	NO_COUPON(94, "No Coupon to Issue"),
+	USERID_ALREADY_USED(93, "UserId already Used"), 
+	INCORRECT_PASSWORD(92, "Password is incorrect"),
+	FAIL(91, "Something wrong");
 	</pre></code>
