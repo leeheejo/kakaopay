@@ -1,4 +1,4 @@
-package com.kakaopay.exeption;
+package com.kakaopay.exception;
 
 public class InvalidTokenException extends Exception {
 

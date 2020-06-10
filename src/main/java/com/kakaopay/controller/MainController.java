@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kakaopay.constant.Constant;
-import com.kakaopay.exeption.ExpiredCouponException;
+import com.kakaopay.exception.ExpiredCouponException;
 import com.kakaopay.model.Coupon;
 import com.kakaopay.request.RequestCouponDefault;
 import com.kakaopay.response.ReturnDefault;

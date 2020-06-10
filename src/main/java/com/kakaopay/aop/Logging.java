@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.kakaopay.exeption.InvalidTokenException;
+import com.kakaopay.exception.InvalidTokenException;
 import com.kakaopay.response.ReturnDefault;
 import com.kakaopay.response.ReturnMessage;
 
@@ -65,18 +65,5 @@ public class Logging {
 				pjp.getSignature().getDeclaringTypeName() + ". " + pjp.getSignature().getName());
 		return pjp.proceed(pjp.getArgs());
 	}
-
-//	@AfterThrowing(pointcut = "execution(* generateCoupon(Long))", throwing = "ex")
-//	public void doRecoveryActions(Exception ex) {
-//		logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-//		// Some code may be System.out.println
-//		// or e.printStackTrace()
-//	}
-
-//	@AfterThrowing(value = "execution(* com.test.controller.TestController.*(..))", throwing = "exception")
-//	public void writeFailLog(Exception exception) throws RuntimeException {
-//		// logging
-//		// exception 으로 해당 메서드에서 발생한 예외를 가져올 수 있다.
-//	}
 
 }

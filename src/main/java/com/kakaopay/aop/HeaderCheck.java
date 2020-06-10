@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.kakaopay.exeption.InvalidTokenException;
+import com.kakaopay.exception.InvalidTokenException;
 import com.kakaopay.utils.JWTUtils;
 
 @Component

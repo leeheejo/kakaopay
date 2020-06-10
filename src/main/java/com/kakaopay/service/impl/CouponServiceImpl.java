@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kakaopay.constant.Constant;
-import com.kakaopay.exeption.ExpiredCouponException;
-import com.kakaopay.exeption.InvalidTokenException;
+import com.kakaopay.exception.ExpiredCouponException;
+import com.kakaopay.exception.InvalidTokenException;
 import com.kakaopay.model.Coupon;
 import com.kakaopay.repo.CouponRepository;
 import com.kakaopay.service.CouponService;

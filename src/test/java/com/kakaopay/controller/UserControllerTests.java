@@ -21,7 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.kakaopay.exeption.InvalidUserException;
+import com.kakaopay.exception.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.repo.UserRepository;
 import com.kakaopay.response.ReturnDefault;

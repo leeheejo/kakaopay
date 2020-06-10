@@ -1,4 +1,4 @@
-package com.kakaopay.exeption;
+package com.kakaopay.exception;
 
 import javax.persistence.EntityNotFoundException;
 

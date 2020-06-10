@@ -2,8 +2,8 @@ package com.kakaopay.service;
 
 import java.util.List;
 
-import com.kakaopay.exeption.ExpiredCouponException;
-import com.kakaopay.exeption.InvalidTokenException;
+import com.kakaopay.exception.ExpiredCouponException;
+import com.kakaopay.exception.InvalidTokenException;
 import com.kakaopay.model.Coupon;
 
 public interface CouponService {

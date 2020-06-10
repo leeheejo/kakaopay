@@ -2,7 +2,7 @@ package com.kakaopay.service;
 
 import java.io.UnsupportedEncodingException;
 
-import com.kakaopay.exeption.InvalidUserException;
+import com.kakaopay.exception.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.request.RequestUserDefault;
 

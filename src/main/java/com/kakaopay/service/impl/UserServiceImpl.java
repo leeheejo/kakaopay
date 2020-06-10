@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kakaopay.constant.Constant;
-import com.kakaopay.exeption.InvalidUserException;
+import com.kakaopay.exception.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.repo.UserRepository;
 import com.kakaopay.service.UserService;

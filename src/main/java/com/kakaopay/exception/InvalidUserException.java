@@ -1,4 +1,4 @@
-package com.kakaopay.exeption;
+package com.kakaopay.exception;
 
 public class InvalidUserException extends Exception {
 	public InvalidUserException(String msg) {

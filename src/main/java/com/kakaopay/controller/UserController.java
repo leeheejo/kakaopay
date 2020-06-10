@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kakaopay.constant.Constant;
-import com.kakaopay.exeption.InvalidUserException;
+import com.kakaopay.exception.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.request.RequestUserDefault;
 import com.kakaopay.response.ReturnDefault;
