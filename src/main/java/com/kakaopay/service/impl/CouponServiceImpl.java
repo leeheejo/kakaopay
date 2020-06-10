@@ -25,8 +25,6 @@ import com.kakaopay.service.CouponService;
 @Service
 public class CouponServiceImpl implements CouponService {
 
-	private static final Logger logger = LoggerFactory.getLogger(CouponServiceImpl.class);
-
 	@Autowired
 	CouponRepository couponRepo;
 
@@ -94,7 +92,6 @@ public class CouponServiceImpl implements CouponService {
 		// TODO Auto-generated method stub
 		LocalDateTime start = LocalDate.now().atStartOfDay();
 		LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);
-		logger.info(start.toString() + " " + end.toString());
 		boolean useStatus = false;
 		List<Coupon> expiredToday = couponRepo.findByExpiredAtBetweenAndIsUsed(start, end, useStatus);
 		return expiredToday;

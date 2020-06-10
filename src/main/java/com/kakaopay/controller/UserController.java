@@ -20,24 +20,19 @@ import com.kakaopay.constant.Constant;
 import com.kakaopay.exeption.InvalidUserException;
 import com.kakaopay.model.User;
 import com.kakaopay.request.RequestUserDefault;
-import com.kakaopay.response.CouponListDTO;
 import com.kakaopay.response.ReturnDefault;
 import com.kakaopay.response.TokenDTO;
 import com.kakaopay.service.UserService;
-import com.kakaopay.utils.SHA256Util;
 
 @RestController
 public class UserController {
-	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	UserService userService;
 
 	@PostMapping(value = "/user/signup")
-	public @ResponseBody ResponseEntity<Object> signUp(@RequestHeader HttpHeaders headers,
-			final @Valid @RequestBody RequestUserDefault user)
+	public @ResponseBody ResponseEntity<Object> signUp(final @Valid @RequestBody RequestUserDefault user)
 			throws InvalidUserException, UnsupportedEncodingException {
-		logger.info(user.toString());
 		User userInfo = new User(user.getUserId(), user.getPassword());
 		String token = userService.signUpUser(userInfo);
 		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())

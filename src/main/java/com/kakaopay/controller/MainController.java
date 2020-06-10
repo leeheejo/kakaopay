@@ -32,13 +32,11 @@ import com.mysql.cj.protocol.Message;
 
 @RestController
 public class MainController {
-	private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 	@Autowired
 	CouponService couponService;
 
 	@PostMapping(value = "/coupon/{N}")
-	public @ResponseBody ResponseEntity<Object> generateCoupon(@RequestHeader HttpHeaders headers,
-			@PathVariable Long N) {
+	public @ResponseBody ResponseEntity<Object> generateCoupon(@PathVariable Long N) {
 		couponService.generateCoupon(N);
 
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())

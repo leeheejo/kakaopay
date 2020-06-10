@@ -2,8 +2,6 @@ package com.kakaopay.exeption;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -18,11 +16,8 @@ import com.kakaopay.response.ReturnMessage;
 @ControllerAdvice
 public class MainAdvice {
 
-	private static final Logger logger = LoggerFactory.getLogger(MainAdvice.class);
-
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Object processValidationError(MethodArgumentNotValidException ex) {
-		logger.info(ex.getMessage());
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.INVALID_REQUESTBODY.getCode())
 				.message(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage()).build();
 		return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
@@ -30,7 +25,6 @@ public class MainAdvice {
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public Object processValidationError(MethodArgumentTypeMismatchException ex) {
-		logger.info(ex.getMessage());
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.INVALID_REQUESTBODY.getCode())
 				.message(Constant.RES.INVALID_REQUESTBODY.getMessage()).build();
 		return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
@@ -38,7 +32,6 @@ public class MainAdvice {
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	public Object processValidationError(EntityNotFoundException ex) {
-		logger.info(ex.toString());
 		ReturnMessage msg = ReturnMessage.builder().build();
 		HttpStatus statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 		if (ex.getMessage().equals(Constant.RES.INVALID_COUPON.getMessage())) {
@@ -67,7 +60,6 @@ public class MainAdvice {
 
 	@ExceptionHandler(ExpiredCouponException.class)
 	public Object processValidationError(ExpiredCouponException ex) {
-		logger.info(ex.getMessage());
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.EXPIRED_COUPON.getCode())
 				.message(Constant.RES.EXPIRED_COUPON.getMessage()).build();
 		return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -75,7 +67,6 @@ public class MainAdvice {
 
 	@ExceptionHandler(InvalidTokenException.class)
 	public Object processValidationError(InvalidTokenException ex) {
-		logger.info(ex.getMessage());
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.INVALID_TOKEN.getCode())
 				.message(Constant.RES.INVALID_TOKEN.getMessage()).build();
 		return new ResponseEntity<>(msg, HttpStatus.UNAUTHORIZED);
@@ -83,7 +74,6 @@ public class MainAdvice {
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public Object processValidationError(HttpMessageNotReadableException ex) {
-		logger.info(ex.getMessage());
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.INVALID_REQUESTBODY.getCode())
 				.message(Constant.RES.INVALID_REQUESTBODY.getMessage()).build();
 		return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
