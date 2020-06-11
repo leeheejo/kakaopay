@@ -9,7 +9,7 @@ Rest API 기반 쿠폰시스템
 * JAVA8 
 * SpringBoot 2.3.0
 * H2
-* MAVEN 
+* MAVEN 3.6.3
 * JUNIT4
 * GIT 
 * IDE : STS4
