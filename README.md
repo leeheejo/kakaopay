@@ -32,7 +32,7 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 	
 # 3. 기능 요구사항 및 문제해결 전략 
 ## 필수사항 
-* 필수사항의 모든 요청은 헤더에 Authorization에 _3.8 signup 계정생성 API_ 혹은 _3.9 signin 로그인 API_ 에서 발급 받은 유효한 토큰을 가져야 한다. 
+* 필수사항의 모든 요청은 헤더에 Authorization에 `3.8 signup 계정생성 API` 혹은 `3.9 signin 로그인 API` 에서 발급 받은 유효한 토큰을 가져야 한다. 
 
 * 엔티티는 다음과 같다. 
 
