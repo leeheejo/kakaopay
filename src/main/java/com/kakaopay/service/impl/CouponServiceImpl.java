@@ -1,5 +1,8 @@
 package com.kakaopay.service.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,18 +12,17 @@ import java.util.Random;
 
 import javax.persistence.EntityNotFoundException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kakaopay.constant.Constant;
 import com.kakaopay.exception.ExpiredCouponException;
-import com.kakaopay.exception.InvalidTokenException;
+import com.kakaopay.exception.InvalidUserException;
 import com.kakaopay.model.Coupon;
 import com.kakaopay.repo.CouponRepository;
 import com.kakaopay.service.CouponService;
+import com.kakaopay.utils.JWTUtils;
 
 @Service
 public class CouponServiceImpl implements CouponService {
@@ -51,8 +53,10 @@ public class CouponServiceImpl implements CouponService {
 
 	@Override
 	@Transactional
-	public String issueCoupon() {
+	public String issueCoupon(String token)
+			throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
 		// TODO Auto-generated method stub
+		String userId = JWTUtils.getUserIdFromToken(token);
 		Coupon coupon = couponRepo.findTop1ByIsIssued(false);
 
 		if (coupon == null)
@@ -60,6 +64,7 @@ public class CouponServiceImpl implements CouponService {
 
 		coupon.setIssued(true);
 		coupon.setIssuedAt(LocalDateTime.now());
+		coupon.setUserId(userId);
 		couponRepo.save(coupon);
 		return coupon.getCoupon();
 	}
@@ -73,12 +78,17 @@ public class CouponServiceImpl implements CouponService {
 
 	@Override
 	@Transactional
-	public void changeUseCoupon(String coupon, boolean currentUseStatus) throws ExpiredCouponException {
+	public void changeUseCoupon(String token, String coupon, boolean currentUseStatus) throws ExpiredCouponException,
+			UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException, InvalidUserException {
 		// currentUseStatus == true : 취소 처리 currentUseStatus == false면 사용처리
 		Coupon c = couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, currentUseStatus);
 
 		if (c == null)
 			throw new EntityNotFoundException(Constant.RES.INVALID_COUPON.getMessage());
+
+		String userId = JWTUtils.getUserIdFromToken(token);
+		if (!c.getUserId().equals(userId))
+			throw new InvalidUserException(Constant.RES.USERID_NOT_MATCH.getMessage());
 
 		if (c.getExpiredAt().isBefore(LocalDateTime.now()))
 			throw new ExpiredCouponException(Constant.RES.EXPIRED_COUPON.getMessage());
@@ -98,27 +108,24 @@ public class CouponServiceImpl implements CouponService {
 	}
 
 	private String createCouponNum() {
-		StringBuffer temp = new StringBuffer();
+		StringBuffer num = new StringBuffer();
 		Random rnd = new Random();
 		for (int i = 0; i < 20; i++) {
-			int rIndex = rnd.nextInt(3);
-			switch (rIndex) {
-			case 0:
-				// a-z
-				temp.append((char) ((int) (rnd.nextInt(26)) + 97));
+			int idx = rnd.nextInt(3);
+			switch (idx) {
+			case 0:// a-z
+				num.append((char) ((int) (rnd.nextInt(26)) + 97));
 				break;
-			case 1:
-				// A-Z
-				temp.append((char) ((int) (rnd.nextInt(26)) + 65));
+			case 1:// A-Z
+				num.append((char) ((int) (rnd.nextInt(26)) + 65));
 				break;
-			case 2:
-				// 0-9
-				temp.append((rnd.nextInt(10)));
+			case 2:// 0-9
+				num.append((rnd.nextInt(10)));
 				break;
 			}
 		}
 
-		return temp.toString();
+		return num.toString();
 	}
 
 }

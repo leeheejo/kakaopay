@@ -28,7 +28,7 @@ public class Scheduler {
 		LocalDateTime end = LocalDate.now().plusDays(3).atTime(LocalTime.MAX);
 		List<Coupon> coupons = couponRepo.findByExpiredAtBetweenAndIsUsed(start, end, false);
 		for (Coupon c : coupons) {
-			logger.info("[" + c.getCoupon() + "] 쿠폰이 3일 후 만료됩니다.");
+			logger.info(c.getUserId()+"님에게 전송합니다. [" + c.getCoupon() + "] 쿠폰이 3일 후 만료됩니다.");
 		}
 	}
 

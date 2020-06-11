@@ -28,12 +28,10 @@ public class JWTUtils {
 		String secretKey = Constant.getJwtKey();
 
 		Encoder encoder = Base64.getEncoder();
-
 		String jwt = Jwts.builder().setExpiration(new Date(System.currentTimeMillis() + (3600000)))
-				.claim("userId", encoder.encode(id.getBytes())).claim("iat", System.currentTimeMillis())
+				.claim("userId", new String(encoder.encode(id.getBytes()))).claim("iat", System.currentTimeMillis())
 				.signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8")).compact();
-		System.out.println(jwt);
-
+		
 		return jwt;
 	}
 
@@ -59,8 +57,8 @@ public class JWTUtils {
 
 		String jwt = Jwts.builder().claim("exp", obj.get("exp")).claim("userId", obj.get("userId"))
 				.claim("iat", obj.get("iat")).signWith(SignatureAlgorithm.HS256, secretKey.getBytes("UTF-8")).compact();
-		
-		//TODO: 사용자 아이디가 존재하는지 검사해야한다. 
+
+		// TODO: 사용자 아이디가 존재하는지 검사해야한다.
 		if (token.equals(jwt)) {
 			long exp = Long.parseLong(obj.get("exp").toString());
 			long currentTime = System.currentTimeMillis();
@@ -74,14 +72,16 @@ public class JWTUtils {
 
 	}
 
-	static public String getUserIdFromToken(String token) {
+	static public String getUserIdFromToken(String token)
+			throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
 
 		Decoder decoder = Base64.getDecoder();
 		String enPayload = token.split("\\.")[1];
 		String dePayload = new String(decoder.decode(enPayload));
 		JSONObject obj = new JSONObject(dePayload);
 
-		String userId = obj.get("userID").toString();
+		String encodeduserId = obj.get("userId").toString();
+		String userId = new String(decoder.decode(encodeduserId.getBytes()));
 		return userId;
 	}
 

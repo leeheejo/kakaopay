@@ -11,7 +11,7 @@ public final class Constant {
 		INVALID_TOKEN(97, "Invalid Token"), EXPIRED_COUPON(96, "Expired Coupon"),
 		USERID_NOT_EXIST(95, "UserId is not exist"), NO_COUPON(94, "No Coupon to Issue"),
 		USERID_ALREADY_USED(93, "UserId already Used"), INCORRECT_PASSWORD(92, "Password is incorrect"),
-		FAIL(91, "Something wrong");
+		FAIL(91, "Something wrong"), USERID_NOT_MATCH(90, "UserId is not match");
 
 		private int code;
 		private String message;

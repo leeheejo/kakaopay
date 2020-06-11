@@ -82,10 +82,14 @@ PUT /coupon/issue
 
 #### - 문제해결 전략 
 * `MainController`에 `@PutMapping(value = "/coupon/issue")`를 생성한다. 
-* `com.kakaopay.service.CouponService`의 `issueCoupon()` 매소드가 로직을 처리한다.
+* `com.kakaopay.service.CouponService`의 `issueCoupon(token)` 매소드가 로직을 처리한다.
 * 쿠폰을 발급하는 로직은 아래와 같다.  
 	* JPA의 `findTop1ByIsIssued(false)`을 통해 발급되지 않은 쿠폰 중 하나를 찾는다.
-	* 해당 Coupon의 `is_issued`를 true로, `issued_at`를 발급시간으로 값을 변경한다. 
+	* 해당 Coupon의 `is_issued`를 true로, `issued_at`를 발급시간으로, `user_id`를 토큰의 userId 값으로 값을 변경한다. 
+		* JWT 토큰에서 userId를 가져오는 방법은 다음과 같다. 
+			* JWT토큰에서 payload를 디코딩한다. 
+			* 디코딩한 payload에서 userId 값을 가져온다. 
+			* userId도 인코딩되어 있기 때문에 한번 더 디코딩하여 userId 값을 가져온다.
 	* 생성되어 있는 쿠폰이 없는 경우에는 다음과 같은 응답을 리턴한다. 
 	<pre><code>
 	{
@@ -155,9 +159,16 @@ PUT /coupon/use
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용은 하지 않은 쿠폰)
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
+	* 토큰의 소유자와 쿠폰의 소유자가 동일한지 확인한다. 동일하지 않으면 아래와 같이 리턴한다. 
+	<pre><code>
+	{
+    	"code": 90,
+    	"message": "UserId is not match"
+	}
+	</pre></code>
 	* 해당 조건에 일치하는 쿠폰이 있는 경우에는 만료기간 검사를 한다. 이미 만료된 경우에는 아래와 같이 리턴한다. 
 	<pre><code>
 	{
@@ -195,9 +206,16 @@ PUT /coupon/cancel
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
+	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용한 쿠폰)
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
+	* 토큰의 소유자와 쿠폰의 소유자가 동일한지 확인한다. 동일하지 않으면 아래와 같이 리턴한다. 
+	<pre><code>
+	{
+    	"code": 90,
+    	"message": "UserId is not match"
+	}
+	</pre></code>
 	* 해당 조건에 일치하는 쿠폰이 있는 경우에는 만료기간 검사를 한다. 이미 만료된 경우에는 아래와 같이 리턴한다.
 	<pre><code>
 	{
@@ -247,7 +265,7 @@ GET /coupon/expire
 #### 매일 00시 00분 00초에 발급된 쿠폰  만료 3일전인 쿠폰을 찾 다음과 같이 출력한다. 
 #### - 출력화면
 <pre><code>
-[4945jW73jEFMEed2lX52] 쿠폰이 3일 후 만료됩니다.
+testId567님에게 전송합니다. [jv6ZchIxdXpGRZsB0iTx] 쿠폰이 3일 후 만료됩니다.
 </pre></code>
 
 #### - 문제해결 전략 
@@ -367,9 +385,15 @@ POST /user/signin
 		"message": "Invalid Token"
 	}
 	</pre></code>
-	
+	* 토큰의 유효성은 `com.kakaopay.utils.validateToken`에서 검사하고 방법은 다음과 같다.
+		* 토큰이 null인지 경우는 false(유효하지 않음 처리한다.)
+		* jwt 형식(header.payload.signiture)이 아닌 경우는 false 처리한다.
+		* payload를 검사한다. payload에 사용자아이디, 만료시간, 발급시간 중 하나라도 없는 경우 false 처리한다. 
+		* 토큰의 payload를 기반으로 자체적으로 jwt토큰을 새로 생성한다. 
+		* 입력받은 토큰값과 새로 생성한 토큰값을 비교한다. 일치하는 경우 payload의 만료시간을 검사해 만료된 토큰인지 검사하고, 만료된 경우 false 처리한다. 
+		* 모든 조건을 통과하면 true(유효한 토큰)로 처리한다. 
 #### 3.10.3 예외처리
-* `com.kakaopay.exception.MainAdvice` 에서 예외처리를 관리한다. 
+* `com.kakaopay.exception.MainAdvice` 에서 `@ControllerAdvice`를 추가해 전역 예외처리를 관리한다. 
 * 발생할 수 있는 예외 별로 어떤 HTTP Status Code와 메시지를 리턴할지 정의하고, 예외 발생 시 이에 따라 리턴한다. 
 * 예외 메시지와 예외 코드는 com.kakaopay.constant.Constant.RES에 공통으로 정의했다. 정의되어 있는 예외 코드는 다음과 같다. 
 	<pre><code>
@@ -382,5 +406,6 @@ POST /user/signin
 	NO_COUPON(94, "No Coupon to Issue"),
 	USERID_ALREADY_USED(93, "UserId already Used"), 
 	INCORRECT_PASSWORD(92, "Password is incorrect"),
-	FAIL(91, "Something wrong");
+	FAIL(91, "Something wrong"), 
+	USERID_NOT_MATCH(90, "UserId is not match");
 	</pre></code>

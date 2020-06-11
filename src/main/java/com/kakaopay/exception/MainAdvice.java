@@ -98,6 +98,11 @@ public class MainAdvice {
 			msg = ReturnMessage.builder().code(Constant.RES.USERID_NOT_EXIST.getCode())
 					.message(Constant.RES.USERID_NOT_EXIST.getMessage()).build();
 
+		} else if (ex.getMessage().equals(Constant.RES.USERID_NOT_MATCH.getMessage())) {
+			statusCode = HttpStatus.UNAUTHORIZED;
+			msg = ReturnMessage.builder().code(Constant.RES.USERID_NOT_MATCH.getCode())
+					.message(Constant.RES.USERID_NOT_MATCH.getMessage()).build();
+
 		} else {
 			msg = ReturnMessage.builder().code(Constant.RES.FAIL.getCode()).message(Constant.RES.FAIL.getMessage())
 					.build();

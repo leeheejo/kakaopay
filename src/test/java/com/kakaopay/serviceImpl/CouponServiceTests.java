@@ -3,6 +3,9 @@ package com.kakaopay.serviceImpl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThat;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -23,6 +26,8 @@ import com.kakaopay.service.CouponService;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CouponServiceTests {
 	private static boolean setUpFlag = false;
+	// 7월 9일까지 테스트용 토큰 발급
+	private static String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTQyNzQ5NjksInVzZXJJZCI6IlpFZFdlbVJGYkd0T1ZGa3oiLCJpYXQiOjE1OTE2ODI3OTMyMjB9.U2fBICMxqVXedM2BQwhFZ_jClGVBqAPg5z4YrYVvK4o";
 
 	@Autowired
 	CouponService couponService;
@@ -31,7 +36,7 @@ public class CouponServiceTests {
 	CouponRepository couponRepo;
 
 	@Before
-	public void init() {
+	public void init() throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
 		if (setUpFlag) {
 			return;
 		}
@@ -39,7 +44,7 @@ public class CouponServiceTests {
 		couponService.generateCoupon(5L);
 		List<Coupon> testList = couponRepo.findAll();
 		assertThat(testList.size(), CoreMatchers.is(5));
-		String couponNumForTest = couponService.issueCoupon();
+		String couponNumForTest = couponService.issueCoupon(token);
 		assertThat(couponNumForTest).isNotBlank();
 		setUpFlag = true;
 	}
@@ -52,7 +57,7 @@ public class CouponServiceTests {
 
 	@Test
 	public void issueCoupon() throws Exception {
-		String coupon = couponService.issueCoupon();
+		String coupon = couponService.issueCoupon(token);
 		assertThat(coupon).isNotBlank();
 		assertThat(coupon.length()).isEqualTo(20);
 	}
@@ -68,12 +73,12 @@ public class CouponServiceTests {
 
 	@Test
 	public void changeUseCoupon() throws Exception {
-		String coupon = couponService.issueCoupon();
-		couponService.changeUseCoupon(coupon, false);
+		String coupon = couponService.issueCoupon(token);
+		couponService.changeUseCoupon(token, coupon, false);
 		Coupon c = couponRepo.findOneByCoupon(coupon);
 		assertThat(c.isUsed()).isEqualTo(true);
 
-		couponService.changeUseCoupon(coupon, true);
+		couponService.changeUseCoupon(token, coupon, true);
 		c = couponRepo.findOneByCoupon(coupon);
 		assertThat(c.isUsed()).isEqualTo(false);
 	}

@@ -68,7 +68,6 @@ public class UserControllerTests {
 		System.out.println(response.getStatusCode());
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(response.getBody().getResult()).isNotNull();
-		assertThat(userRepo.findAll().size()).isEqualTo(2);
 	}
 
 	@Test

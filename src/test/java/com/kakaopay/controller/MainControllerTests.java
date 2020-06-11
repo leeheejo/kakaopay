@@ -3,6 +3,9 @@ package com.kakaopay.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThat;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -42,11 +45,11 @@ public class MainControllerTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
-	//7월 9일까지 테스트용 토큰 발급
+	// 7월 9일까지 테스트용 토큰 발급
 	private static String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTQyNzQ5NjksInVzZXJJZCI6IlpFZFdlbVJGYkd0T1ZGa3oiLCJpYXQiOjE1OTE2ODI3OTMyMjB9.U2fBICMxqVXedM2BQwhFZ_jClGVBqAPg5z4YrYVvK4o";
 
 	@Before
-	public void init() {
+	public void init() throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
 		if (setUpFlag) {
 			return;
 		}
@@ -54,7 +57,7 @@ public class MainControllerTests {
 		couponService.generateCoupon(5L);
 		List<Coupon> testList = couponRepo.findAll();
 		assertThat(testList.size(), CoreMatchers.is(5));
-		String couponNumForTest = couponService.issueCoupon();
+		String couponNumForTest = couponService.issueCoupon(token);
 		assertThat(couponNumForTest).isNotBlank();
 		setUpFlag = true;
 	}
@@ -64,7 +67,6 @@ public class MainControllerTests {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		headers.add("Authorization", token);
-		System.out.println(headers.toString());
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
 		ResponseEntity<String> response = restTemplate.postForEntity("/coupon/10", request, String.class);
@@ -101,7 +103,7 @@ public class MainControllerTests {
 
 	@Test
 	public void useCoupon() throws Exception {
-		String couponNumForTest = couponService.issueCoupon();
+		String couponNumForTest = couponService.issueCoupon(token);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", token);
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -115,8 +117,8 @@ public class MainControllerTests {
 
 	@Test
 	public void cancelCoupon() throws Exception {
-		String couponNumForTest = couponService.issueCoupon();
-		couponService.changeUseCoupon(couponNumForTest, false);
+		String couponNumForTest = couponService.issueCoupon(token);
+		couponService.changeUseCoupon(token, couponNumForTest, false);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		headers.add("Authorization", token);
