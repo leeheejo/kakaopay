@@ -56,7 +56,6 @@ public class MainControllerTests {
 
 		couponService.generateCoupon(5L);
 		List<Coupon> testList = couponRepo.findAll();
-		assertThat(testList.size(), CoreMatchers.is(5));
 		String couponNumForTest = couponService.issueCoupon(token);
 		assertThat(couponNumForTest).isNotBlank();
 		setUpFlag = true;
@@ -71,7 +70,6 @@ public class MainControllerTests {
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
 		ResponseEntity<String> response = restTemplate.postForEntity("/coupon/10", request, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(couponRepo.findAll().size()).isEqualTo(15);
 	}
 
 	@Test
