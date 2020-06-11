@@ -85,7 +85,7 @@ POST /coupon/{N}
 
 #### - 문제해결 전략 
 * `MainController`에 `@PostMapping(value = "/coupon/{N}")`를 생성하고 파라미터에 `@PathVariable Long N`을 추가해 N을 input으로 받도록 했다. 
-* `com.kakaopay.service.CouponService`의 `generateCoupon(Long N)` 매소드가 로직을 처리한다.
+* `com.kakaopay.service.CouponService`의 `generateCoupon(N)` 매소드가 로직을 처리한다.
 * 쿠폰을 발급하고 DB에 저장되는 로직은 다음과 같다. 
 	* N개 만큼 쿠폰을 발급해 `List<Coupont> list`에 담는다. 
 	* `com.kakaopay.repo.CouponRepository`(JPA)의 `saveAll(list)`을 통해 DB에 저장한다. 
