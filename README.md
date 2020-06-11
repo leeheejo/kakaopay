@@ -90,9 +90,8 @@ POST /coupon/{N}
 	* N개 만큼 쿠폰을 발급해 `List<Coupont> list`에 담는다. 
 	* `com.kakaopay.repo.CouponRepository`(JPA)의 `saveAll(list)`을 통해 DB에 저장한다. 
 		* Coupon 번호가 Coupon테이블의 Key로 사용된다. 따라서 쿠폰 번호가 같은 경우 DB에 저장되지 않는다. 
-		* 쿠폰은 소문자, 대문자, 숫자로 이루어진 20자리 랜덤한 String을 발급하기 때문에 경우의 수는 적지만 혹시나 쿠폰번호가 겹쳐 input의 N개만큼 쿠폰을 발급하지 못하는 경우를 다음과 같이 처리했다. 
-			* Coupon의 `create_at`을 확인하여 저장되지 않은 개수를 체크하고 다시 쿠폰을 발급하고 저장한다. 
-			* 저장되지 않는 경우, `create_at` 가 null인 점을 활용했다. 
+		* 쿠폰은 소문자, 대문자, 숫자로 이루어진 20자리 랜덤한 String을 발급한다. 경우의 수는 적지만 혹시나 쿠폰번호가 겹쳐 input의 N개만큼 쿠폰을 발급하지 못하는 경우를 다음과 같이 처리했다. 
+			* `saveAll(list)`을 통해 저장한 후, Coupon의 `create_at`을 확인하여 저장되지 않은 개수를 체크하고 다시 쿠폰을 발급하고 저장한다. (저장되지 않는 경우, `create_at` 가 null인 점을 활용했다.)
 * 쿠폰번호 발급은 다음과 같은 절차로 진행된다 
 	* 20자리 대문자, 소문자, 숫자로 구성된 랜덤한 String을 발급한다. 
 	* 각 자리의 문자열을 생성할 때, 쿠폰들의 숫자와 문자의 위치가 동일하지 않도록 먼저 1~3사이의 난수를 발급한다. 
@@ -235,7 +234,7 @@ PUT /coupon/use
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon(token, coupon, currentUseStatus)` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, false)`를 통해 입력받은 쿠폰번호이면서, 사용자에게 지급 되었고, 사용은 하지 않은 쿠폰을 조회한다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findOneByCouponAndIsIssuedAndIsUsed(coupon, true, false)`를 통해 입력받은 쿠폰번호이면서, 사용자에게 지급 되었고, 사용은 하지 않은 쿠폰을 조회한다. 
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
 	<pre><code>
 	{
@@ -288,7 +287,7 @@ PUT /coupon/cancel
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon(token, coupon, currentUseStatus)` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findOneByCouponAndIsIssuedAndIsUsed(coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용한 쿠폰)
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
 	<pre><code>
@@ -418,7 +417,7 @@ POST /user/signup
 	* 패스워드를 `SHA256`암호화 방식을 통해 암호화 한다. 
 	* 암호화한 패스워드와 입력받은 아이디를 `com.kakaopay.repo.UserRepository`(JPA) `save(user)`를 통해 저장한다. 
 	* `com.kakaopay.utils.JWTUtils` 의 `generateToken(id)`를 통해 토큰을 발급한다. 
-		* payload를 생성하고, private key를 만들어 서명을 생성한다. 
+		* payload를 생성하고, private key를  서명을 생성한다. 
 		* payload 구조
 		<pre><code>
 		{
