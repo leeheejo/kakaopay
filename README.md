@@ -372,6 +372,10 @@ testId567님에게 전송합니다. [jv6ZchIxdXpGRZsB0iTx] 쿠폰이 3일 후 �
 #### - REQUEST
 <pre><code>
 POST /user/signup
+{
+	"userId" : "testId",
+	"password": "123"
+}
 </pre></code>
 
 #### - RESPONSE
@@ -387,6 +391,20 @@ POST /user/signup
 
 #### - 문제해결 전략 
 * `UserController`에 `@PostMapping(value = "/user/signup")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
+	* userId가 없거나 빈칸인 경우 다음과 같이 리턴한다. 
+	<pre><code>
+	{
+	    "code": 99,
+	    "message": "[userId] is Null"
+	}
+	</pre></code>
+	* password가 없거나 빈칸인 경우 다음과 같이 리턴한다. 
+	<pre><code>
+	{
+	    "code": 99,
+	    "message": "[password] is Null"
+	}
+	</pre></code>
 * `com.kakaopay.service.UserService`의 `signUpUser()` 매소드가 로직을 처리한다.
 * sign up을 처리하는 로직은 다음과 같다. 
 	* `com.kakaopay.repo.UserRepository`(JPA)의 `findOneByUserId(id)`를 통해 아이디 중복 검사를 진행한다. 만약 이미 사용되고 있는 아이디인 경우 아래와 같이 리턴한다.
@@ -414,6 +432,10 @@ POST /user/signup
 #### - REQUEST
 <pre><code>
 POST /user/signin
+{
+	"userId" : "testId",
+	"password": "123"
+}
 </pre></code>
 
 #### - RESPONSE
@@ -428,6 +450,20 @@ POST /user/signin
 </pre></code>
 
 * `UserController`에 `@PostMapping(value = "/user/signin")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
+	* userId가 없거나 빈칸인 경우 다음과 같이 리턴한다. 
+	<pre><code>
+	{
+	    "code": 99,
+	    "message": "[userId] is Null"
+	}
+	</pre></code>
+	* password가 없거나 빈칸인 경우 다음과 같이 리턴한다. 
+	<pre><code>
+	{
+	    "code": 99,
+	    "message": "[password] is Null"
+	}
+	</pre></code>
 * `com.kakaopay.service.UserService`의 `signInUser()` 매소드가 로직을 처리한다.
 * sign in을 처리하는 로직은 다음과 같다. 
 	* `com.kakaopay.repo.UserRepository`(JPA)의 `findOneByUserId(id)`를 통해 해당 아이디의 사용자가 있는지 먼저 검사한다. 없는 아이디인 경우 다음과 같이 리턴한다. 
