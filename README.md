@@ -179,7 +179,7 @@ PUT /coupon/use
     		"message": "Invalid Coupon"
 	}
 	</pre></code>
-* `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
+* `com.kakaopay.service.CouponService`의 `changeUseCoupon(token, coupon, currentUseStatus)` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
 	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용은 하지 않은 쿠폰)
@@ -226,7 +226,7 @@ PUT /coupon/cancel
     		"message": "Invalid Coupon"
 	}
 	</pre></code>
-* `com.kakaopay.service.CouponService`의 `changeUseCoupon()` 매소드가 로직을 처리한다.
+* `com.kakaopay.service.CouponService`의 `changeUseCoupon(token, coupon, currentUseStatus)` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
 	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용한 쿠폰)
