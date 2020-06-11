@@ -24,15 +24,35 @@ $ cd target
 $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 </code></pre>
 
-#### `http://localhost:8001` 로 실행된다. 
-#### Database는 `http://localhost:8001/h2-console` 접속해서 확인할 수 있으며 접속정보는 아래와 같다.
+* `http://localhost:8001` 로 실행된다. 
+* Database는 `http://localhost:8001/h2-console` 접속해서 확인할 수 있으며 접속정보는 아래와 같다.
 	* JDBC URL: jdbc:h2:mem:testdb
 	* user name: sa
 	* password: 
 	
 # 3. 기능 요구사항 및 문제해결 전략 
 ## 필수사항 
-#### 필수사항의 모든 요청은 헤더에 Authorization에 _3.8 signup 계정생성 API_ 혹은 _3.9 signin 로그인 API_ 에서 발급 받 유효한 토큰을 가져야 한다. 
+* 필수사항의 모든 요청은 헤더에 Authorization에 _3.8 signup 계정생성 API_ 혹은 _3.9 signin 로그인 API_ 에서 발급 받은 유효한 토큰을 가져야 한다. 
+
+* 엔티티는 다음과 같다. 
+	* COUPON
+	
+
+| 값 | 자료형 | 의미 |
+|---|---|---|
+| `coupon` | varchar | 쿠폰번호(PK) |
+| `created_at` | timestamp | 생성시간 |
+| `issued_at` | timestamp | 발급시간 |
+| `expired_at` | timestamp | 만료시간 |
+| `is_issued` | boolean | 발급여부 |
+| `is_used` | boolean | 사용여부 |
+| `user_id` | varchar | 사용자id |
+
+
+| 값 | 자료형 | 의미 |
+|---|---|---|
+| `userId` | varchar | 사용자id(PK) |
+| `password` | varchar | 비밀번호 |
 
 ### 3.1 랜덤한 코드의 쿠폰을 N개 생성하여 데이터베이스에 보관하는 API를 구현하세요.(input : N) 
 #### - REQUEST
