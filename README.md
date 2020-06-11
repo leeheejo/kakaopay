@@ -36,6 +36,7 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 
 * 엔티티는 다음과 같다. 
 **COUPON**
+
 | 값 | 자료형 | 의미 |
 |---|---|---|
 | `coupon` | varchar | 쿠폰번호(PK) |
@@ -47,6 +48,7 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 | `user_id` | varchar | 사용자id |
 
 **USER**
+
 | 값 | 자료형 | 의미 |
 |---|---|---|
 | `user_id` | varchar | 사용자id(PK) |
