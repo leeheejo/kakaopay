@@ -75,7 +75,7 @@ POST /coupon/{N}
 * `com.kakaopay.service.CouponService`의 `generateCoupon(Long N)` 매소드가 로직을 처리한다.
 * 쿠폰을 발급하고 DB에 저장되는 로직은 다음과 같다. 
 	* N개 만큼 쿠폰을 발급해 `List<Coupont> list`에 담는다. 
-	* `List<Coupon> list`을 JPA의 `saveAll(list)`을 통해 DB에 저장한다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `saveAll(list)`을 통해 DB에 저장한다. 
 		* Coupon 번호가 Coupon테이블의 Key로 사용되고 있기 때문에 번호가 같은 경우 DB에 저장되지 않는다. 20자리 난수 String을 발급하기 때문에 경우의 수는 적지만 혹시나 쿠폰번호가 겹쳐 input N개만큼 쿠폰을 발급하지 못하는 경우를 다음과 같이 처리했다. 
 			* Coupon의 `create_at`을 확인하여 저장되지 않은 개수를 체크하고 다시 쿠폰을 발급하고 저장한다. 
 			* 저장되지 않는 경우, `create_at` 가 null인 점을 활용했다. 
@@ -106,7 +106,7 @@ PUT /coupon/issue
 * `MainController`에 `@PutMapping(value = "/coupon/issue")`를 생성한다. 
 * `com.kakaopay.service.CouponService`의 `issueCoupon(token)` 매소드가 로직을 처리한다.
 * 쿠폰을 발급하는 로직은 아래와 같다.  
-	* JPA의 `findTop1ByIsIssued(false)`을 통해 발급되지 않은 쿠폰 중 하나를 찾는다.
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findTop1ByIsIssued(false)`을 통해 발급되지 않은 쿠폰 중 하나를 찾는다.
 	* 해당 Coupon의 `is_issued`를 true로, `issued_at`를 발급시간으로, `user_id`를 토큰의 userId 값으로 값을 변경한다. 
 		* JWT 토큰에서 userId를 가져오는 방법은 다음과 같다. 
 			* JWT토큰에서 payload를 디코딩한다. 
@@ -151,7 +151,7 @@ GET /coupon/issue
 * `MainController`에 `@GetMapping(value = "/coupon/issue")`를 생성한다. 
 * `com.kakaopay.service.CouponService`의 `findIssuedCoupon()` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 찾는 로직은 다음과 같다. 
-	* JPA의 `findByIsIssued(true)`를 통해 발급된 쿠폰들을 찾는다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findByIsIssued(true)`를 통해 발급된 쿠폰들을 찾는다. 
 	
 ### 3.4 지급된 쿠폰중 하나를 사용하는 API를 구현하세요. (쿠폰 재사용은 불가) (input : 쿠폰번호)
 #### - REQUEST
@@ -181,7 +181,7 @@ PUT /coupon/use
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon(token, coupon, currentUseStatus)` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, false)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용은 하지 않은 쿠폰)
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
 	* 토큰의 소유자와 쿠폰의 소유자가 동일한지 확인한다. 동일하지 않으면 아래와 같이 리턴한다. 
@@ -228,7 +228,7 @@ PUT /coupon/cancel
 	</pre></code>
 * `com.kakaopay.service.CouponService`의 `changeUseCoupon(token, coupon, currentUseStatus)` 매소드가 로직을 처리한다.
 * 발급된 쿠폰을 사용처리하는 로직은 다음과 같다. 
-	* JPA의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findOneByCouponAndIsIssuedAndIsUsed(token, coupon, true, true)`를 통해 발급된 쿠폰들을 찾는다. 
 	(입력받은 쿠폰 번호 중 발급이 완료 되었고, 사용한 쿠폰)
 	* 해당 조건에 일치하는 쿠폰이 없는 경우에는 위와 같은 `Invalid Coupon`에러를 리턴한다. 
 	* 토큰의 소유자와 쿠폰의 소유자가 동일한지 확인한다. 동일하지 않으면 아래와 같이 리턴한다. 
@@ -278,7 +278,7 @@ GET /coupon/expire
 * `MainController`에 `@GetMapping(value = "/coupon/expire")`를 생성한다. 
 * `com.kakaopay.service.CouponService`의 `getExpireTodayCoupon()` 매소드가 로직을 처리한다.
 * 당일 만료하는 쿠폰을 찾는 로직은 아래와 같다. 
-	* JPA의 `findByExpiredAtBetweenAndIsUsed(start, end, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findByExpiredAtBetweenAndIsUsed(start, end, false)`를 통해 발급된 쿠폰들을 찾는다. 
 	(만료 시간이 당일 00:00:00 ~ 당일 23:59:59 사이에 있고 사용하지 않은 쿠폰) 
 
 ## 선택문제
@@ -295,7 +295,7 @@ testId567님에게 전송합니다. [jv6ZchIxdXpGRZsB0iTx] 쿠폰이 3일 후 �
 * `com.kakaopay.KakaopayCouponApplication`에 `@EnableScheduling` 어노테이션 추가한다. 
 * `com.kakaopay.Scheduler`를 `@Component`로 등록하고 그 안에 `@Scheduled(cron = "0 0 0 * * * ")`를 생성한다. 
 * 3일 안에 만료하는 쿠폰을 찾는 로직은 다음과 같다. 
-	* JPA의 `findByExpiredAtBetweenAndIsUsed(start, end, false)`를 통해 발급된 쿠폰들을 찾는다. 
+	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findByExpiredAtBetweenAndIsUsed(start, end, false)`를 통해 발급된 쿠폰들을 찾는다. 
 	(만료 시간이 당일 00:00:00 ~ 3일후 23:59:59 사이에 있고 사용하지 않은 쿠폰) 
 
 
@@ -322,7 +322,7 @@ POST /user/signup
 * `UserController`에 `@PostMapping(value = "/user/signup")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
 * `com.kakaopay.service.UserService`의 `signUpUser()` 매소드가 로직을 처리한다.
 * sign up을 처리하는 로직은 다음과 같다. 
-	* JPA의 `findOneByUserId(id)`를 통해 아이디 중복 검사를 진행한다. 만약 이미 사용되고 있는 아이디인 경우 아래와 같이 리턴한다.
+	* `com.kakaopay.repo.UserRepository`(JPA)의 `findOneByUserId(id)`를 통해 아이디 중복 검사를 진행한다. 만약 이미 사용되고 있는 아이디인 경우 아래와 같이 리턴한다.
 	<pre><code>
 	{
     		"code": 93,
@@ -330,7 +330,7 @@ POST /user/signup
 	}
 	</pre></code>
 	* 패스워드를 `SHA256`암호화 방식을 통해 암호화 한다. 
-	* 암호화한 패스워드와 입력받은 아이디를 JPA의 `save(user)`를 통해 저장한다. 
+	* 암호화한 패스워드와 입력받은 아이디를 `com.kakaopay.repo.UserRepository`(JPA) `save(user)`를 통해 저장한다. 
 	* `com.kakaopay.utils.JWTUtils` 의 `generateToken(id)`를 통해 토큰을 발급한다. 
 		* payload를 생성하고, private key를 만들어 서명을 생성한다. 
 		* payload 구조
@@ -362,7 +362,7 @@ POST /user/signin
 * `UserController`에 `@PostMapping(value = "/user/signin")`를 생성하고, `final @Valid @RequestBody RequestUserDefault user`을 추가해 request body의 유효성을 미리 검사한다. 
 * `com.kakaopay.service.UserService`의 `signInUser()` 매소드가 로직을 처리한다.
 * sign in을 처리하는 로직은 다음과 같다. 
-	* JPA의 `findOneByUserId(id)`를 통해 해당 아이디의 사용자가 있는지 먼저 검사한다. 없는 아이디인 경우 다음과 같이 리턴한다. 
+	* `com.kakaopay.repo.UserRepository`(JPA)의 `findOneByUserId(id)`를 통해 해당 아이디의 사용자가 있는지 먼저 검사한다. 없는 아이디인 경우 다음과 같이 리턴한다. 
 	<pre><code>
 	{
 	    "code": 95,
