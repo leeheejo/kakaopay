@@ -64,6 +64,7 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 | `user_id` | varchar | 사용자id(PK) |
 | `password` | varchar | 비밀번호 |
 
+
 ### 3.1 랜덤한 코드의 쿠폰을 N개 생성하여 데이터베이스에 보관하는 API를 구현하세요.(input : N) 
 #### - REQUEST
 <pre><code>
@@ -93,6 +94,7 @@ POST /coupon/{N}
 	* 각 자리의 문자열을 생성할 때, 쿠폰들의 숫자와 문자의 위치가 동일하지 않도록 먼저 1~3사이의 난수를 발급한다. 
 	이에따라 0: 소문자 1: 대문자 2:숫자가 각각 랜덤하게 발급되게 한다. 
 	* 생성 과정에서는 메모리를 고려해 `StringBuffer`를 활용했다. 
+
 
 ### 3.2 생성된 쿠폰중 하나를 사용자에게 지급하는 API를 구현하세요. (output : 쿠폰번호(XXXXX-XXXXXX-XXXXXXXX))
 #### - REQUEST
@@ -128,6 +130,7 @@ PUT /coupon/issue
     		"message": "No Coupon to Issue"
 	}
 	</pre></code>
+	
 	
 ### 3.3 사용자에게 지급된 쿠폰을 조회하는 API를 구현하세요.
 #### - REQUEST
@@ -199,6 +202,7 @@ GET /coupon/issue
 * 발급된 쿠폰을 찾는 로직은 다음과 같다. 
 	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findByIsIssued(true)`를 통해 사용자에게 지급된 쿠폰들을 찾는다. 
 	
+	
 ### 3.4 지급된 쿠폰중 하나를 사용하는 API를 구현하세요. (쿠폰 재사용은 불가) (input : 쿠폰번호)
 #### - REQUEST
 <pre><code>
@@ -250,6 +254,7 @@ PUT /coupon/use
 	}
 	</pre></code>
 	* 모든 조건 검사를 통과하면 Coupon의 `is_used`를 true로 변경한다. 
+	
 	
 ### 3.5 지급된 쿠폰중 하나를 사용 취소하는 API를 구현하세요. (취소된 쿠폰 재사용 가능) (input : 쿠폰번호)
 #### - REQUEST
@@ -304,6 +309,7 @@ PUT /coupon/cancel
 	</pre></code>
 * 모든 조건 검사를 통과하면 Coupon의 `is_used`를 false로 변경한다. 
 
+
 ### 3.6 발급된 쿠폰중 당일 만료된 전체 쿠폰 목록을 조회하는 API를 구현하세요.
 #### - REQUEST
 <pre><code>
@@ -337,6 +343,7 @@ GET /coupon/expire
 * 당일 만료하는 쿠폰을 찾는 로직은 아래와 같다. 
 	* `com.kakaopay.repo.CouponRepository`(JPA)의 `findByExpiredAtBetweenAndIsUsed(start, end, false)`를 통해 발급된 쿠폰들을 찾는다. 
 	(만료 시간이 당일 00:00:00 ~ 당일 23:59:59 사이에 있고 사용하지 않은 쿠폰) 
+
 
 ## 선택문제
 
@@ -398,7 +405,8 @@ POST /user/signup
   			"iat": 발급시간
 		}
 		</pre></code>
-		
+	
+	
 ### 3.9 signin 로그인 API: 입력으로 생성된 계정 (ID, PW)으로 로그인 요청하면 토큰을 발급한다.
 #### - REQUEST
 <pre><code>
@@ -435,7 +443,8 @@ POST /user/signin
 	}
 	</pre></code>
 	* 위의 조건을 모두 만족한 경우, `com.kakaopay.utils.JWTUtils` 의 `generateToken(id)`를 통해 토큰을 발급한다. 
-		
+
+
 ### 3.10 그외 문제해결 전략
 #### 3.10.1 로깅 
 * AOP를 통해 공통적으로 로깅을 처리한다. 
@@ -454,6 +463,7 @@ POST /user/signin
 	Call Service: com.kakaopay.service.impl.UserServiceImpl.signUpUser
 	</pre></code>
 	
+	
 #### 3.10.2 헤더체크 
 * AOP를 통해 공통적으로 헤더체크를 처리한다. 
 	* `com.kakaopay.aop.HeaderCheck`에서 모든 Request의 전에 헤더를 검사한다. 
@@ -471,6 +481,8 @@ POST /user/signin
 		* 토큰의 payload를 기반으로 자체적으로 jwt토큰을 새로 생성한다. 
 		* 입력받은 토큰값과 새로 생성한 토큰값을 비교한다. 일치하는 경우 payload의 만료시간을 검사해 만료된 토큰인지 검사하고, 만료된 경우 false 처리한다. 
 		* 모든 조건을 통과하면 true(유효한 토큰)로 처리한다. 
+		
+		
 #### 3.10.3 예외처리
 * `com.kakaopay.exception.MainAdvice` 에서 `@ControllerAdvice`를 추가해 전역 예외처리를 관리한다. 
 * 발생할 수 있는 예외 별로 어떤 HTTP Status Code와 메시지를 리턴할지 정의하고, 예외 발생 시 이에 따라 리턴한다. 
