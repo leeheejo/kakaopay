@@ -34,16 +34,7 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 ## 필수사항 
 
 ### 3.0 공통사항
-* 필수사항의 모든 요청은 헤더에 Authorization에 `3.8 signup 계정생성 API` 혹은 `3.9 signin 로그인 API` 에서 발급 받은 유효한 토큰을 가져야 한다. 토큰이 유효하지 않으면 다음과 같이 리턴한다. 
 
-	<pre><code> 
-	{
-		"code": 97,
-		"message": "Invalid Token"
-	}
-	</pre></code>
-	
-	
 * 엔티티는 다음과 같다. 
 
 
@@ -67,7 +58,17 @@ $ java -jar kakaopayCoupon-0.0.1-SNAPSHOT.jar
 | `password` | varchar | 비밀번호 |
 
 
+* 필수사항의 모든 요청은 헤더에 Authorization에 `3.8 signup 계정생성 API` 혹은 `3.9 signin 로그인 API` 에서 발급 받은 유효한 토큰을 가져야 한다. 토큰이 유효하지 않으면 다음과 같이 리턴한다. 
 
+	<pre><code> 
+	{
+		"code": 97,
+		"message": "Invalid Token"
+	}
+	</pre></code>
+	
+	
+	
 ### 3.1 랜덤한 코드의 쿠폰을 N개 생성하여 데이터베이스에 보관하는 API를 구현하세요.(input : N) 
 #### - REQUEST
 <pre><code>
