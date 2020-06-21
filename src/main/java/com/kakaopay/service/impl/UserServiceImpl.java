@@ -21,7 +21,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String signUpUser(User userInfo) throws InvalidUserException, UnsupportedEncodingException {
-		// TODO Auto-generated method stub
 
 		if (userRepo.findOneByUserId(userInfo.getUserId()) != null) {
 			throw new InvalidUserException(Constant.RES.USERID_ALREADY_USED.getMessage());
@@ -37,12 +36,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String signInUser(User userInfo) throws InvalidUserException, UnsupportedEncodingException {
-		// TODO Auto-generated method stub
+		
 		User user = userRepo.findOneByUserId(userInfo.getUserId());
+		
 		if (user == null)
 			throw new InvalidUserException(Constant.RES.USERID_NOT_EXIST.getMessage());
 
 		String encryptedPass = SHA256Util.encrypt(userInfo.getPassword());
+		
 		if (!encryptedPass.equals(user.getPassword()))
 			throw new InvalidUserException(Constant.RES.INCORRECT_PASSWORD.getMessage());
 

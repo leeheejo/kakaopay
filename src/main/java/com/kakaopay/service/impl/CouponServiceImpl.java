@@ -33,8 +33,9 @@ public class CouponServiceImpl implements CouponService {
 	@Override
 	@Transactional
 	public void generateCoupon(Long N) {
-		// TODO Auto-generated method stub
+		
 		Long sameCount = N;
+		
 		do {
 			List<Coupon> list = new ArrayList<>();
 			for (int i = 0; i < sameCount; i++) {
@@ -55,7 +56,7 @@ public class CouponServiceImpl implements CouponService {
 	@Transactional
 	public String issueCoupon(String token)
 			throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
-		// TODO Auto-generated method stub
+		
 		String userId = JWTUtils.getUserIdFromToken(token);
 		Coupon coupon = couponRepo.findTop1ByIsIssued(false);
 
@@ -71,7 +72,6 @@ public class CouponServiceImpl implements CouponService {
 	@Override
 	@Transactional
 	public List<Coupon> findIssuedCoupon() {
-		// TODO Auto-generated method stub
 		return couponRepo.findByIsIssued(true);
 	}
 
@@ -79,6 +79,7 @@ public class CouponServiceImpl implements CouponService {
 	@Transactional
 	public void changeUseCoupon(String token, String coupon, boolean currentUseStatus) throws ExpiredCouponException,
 			UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException, InvalidUserException {
+		
 		// currentUseStatus == true : 취소 처리 currentUseStatus == false면 사용처리
 		Coupon c = couponRepo.findOneByCouponAndIsIssuedAndIsUsed(coupon, true, currentUseStatus);
 
@@ -97,11 +98,13 @@ public class CouponServiceImpl implements CouponService {
 
 	@Override
 	public List<Coupon> getExpireTodayCoupon() {
-		// TODO Auto-generated method stub
+		
 		LocalDateTime start = LocalDate.now().atStartOfDay();
 		LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);
 		boolean useStatus = false;
+		
 		List<Coupon> expiredToday = couponRepo.findByExpiredAtBetweenAndIsUsed(start, end, useStatus);
+		
 		return expiredToday;
 	}
 
