@@ -76,7 +76,7 @@ public class UserControllerTests {
 		String id = userRepo.findAll().get(0).getUserId();
 		String pass = "pass123";
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		Map<String, String> map = new HashMap<>();
 		map.put("userId", id);
 		map.put("password", pass);

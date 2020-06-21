@@ -64,7 +64,7 @@ public class MainControllerTests {
 	@Test
 	public void generateCoupon() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
@@ -75,7 +75,7 @@ public class MainControllerTests {
 	@Test
 	public void issueCoupon() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
@@ -88,7 +88,7 @@ public class MainControllerTests {
 	@Test
 	public void findIssuedCoupon() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(headers);
@@ -104,7 +104,7 @@ public class MainControllerTests {
 		String couponNumForTest = couponService.issueCoupon(token);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", token);
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		Map<String, String> map = new HashMap<>();
 		map.put("coupon", couponNumForTest);
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);
@@ -118,7 +118,7 @@ public class MainControllerTests {
 		String couponNumForTest = couponService.issueCoupon(token);
 		couponService.changeUseCoupon(token, couponNumForTest, false);
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		map.put("coupon", couponNumForTest);
@@ -132,7 +132,7 @@ public class MainControllerTests {
 	@Test
 	public void findExpireTodayCoupon() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Authorization", token);
 		Map<String, String> map = new HashMap<>();
 		HttpEntity<Map<String, String>> request = new HttpEntity<>(map, headers);

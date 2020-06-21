@@ -38,6 +38,7 @@ public class MainController {
 
 	@PostMapping(value = "/coupon/{N}")
 	public @ResponseBody ResponseEntity<Object> generateCoupon(@PathVariable Long N) {
+		
 		couponService.generateCoupon(N);
 
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
@@ -49,8 +50,10 @@ public class MainController {
 	@PutMapping(value = "/coupon/issue")
 	public @ResponseBody ResponseEntity<Object> issueCoupon(@RequestHeader HttpHeaders headers)
 			throws UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException {
+		
 		String token = headers.get("Authorization").get(0);
 		String couponNum = couponService.issueCoupon(token);
+		
 		if (couponNum.equals("")) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} else {
@@ -64,19 +67,25 @@ public class MainController {
 	public @ResponseBody ResponseEntity<Object> findIssuedCoupon() {
 
 		List<Coupon> issuedCoupon = couponService.findIssuedCoupon();
+		
 		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
 				.message(Constant.RES.STATUS_OK.getMessage()).result(new CouponListDTO(issuedCoupon)).build();
+		
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/coupon/use")
 	public @ResponseBody ResponseEntity<Object> useCoupon(@RequestHeader HttpHeaders headers,
 			final @Valid @RequestBody RequestCouponDefault coupon) throws ExpiredCouponException, UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException, InvalidUserException {
+		
 		String token = headers.get("Authorization").get(0);
 		boolean currentUseStatue = false;
+		
 		couponService.changeUseCoupon(token, coupon.getCoupon(), currentUseStatue);
+		
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
 				.message(Constant.RES.STATUS_OK.getMessage()).build();
+		
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
@@ -84,11 +93,15 @@ public class MainController {
 	public @ResponseBody ResponseEntity<Object> cancelCoupon(@RequestHeader HttpHeaders headers,
 			final @Valid @RequestBody RequestCouponDefault coupon) throws ExpiredCouponException,
 			UnsupportedEncodingException, NoSuchAlgorithmException, GeneralSecurityException, InvalidUserException {
+		
 		String token = headers.get("Authorization").get(0);
 		boolean currentUseStatue = true;
+		
 		couponService.changeUseCoupon(token, coupon.getCoupon(), currentUseStatue);
+		
 		ReturnMessage msg = ReturnMessage.builder().code(Constant.RES.STATUS_OK.getCode())
 				.message(Constant.RES.STATUS_OK.getMessage()).build();
+		
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
@@ -96,8 +109,10 @@ public class MainController {
 	public @ResponseBody ResponseEntity<Object> findExpireTodayCoupon() {
 
 		List<Coupon> issuedCoupon = couponService.getExpireTodayCoupon();
+		
 		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
 				.message(Constant.RES.STATUS_OK.getMessage()).result(new CouponListDTO(issuedCoupon)).build();
+		
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 

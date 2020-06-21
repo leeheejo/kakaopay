@@ -33,21 +33,27 @@ public class UserController {
 	@PostMapping(value = "/user/signup")
 	public @ResponseBody ResponseEntity<Object> signUp(final @Valid @RequestBody RequestUserDefault user)
 			throws InvalidUserException, UnsupportedEncodingException {
+		
 		User userInfo = new User(user.getUserId(), user.getPassword());
 		String token = userService.signUpUser(userInfo);
+		
 		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
 				.message(Constant.RES.STATUS_OK.getMessage()).result(new TokenDTO(token)).build();
+		
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/user/signin")
 	public @ResponseBody ResponseEntity<Object> signIn(final @Valid @RequestBody RequestUserDefault user)
 			throws InvalidUserException, UnsupportedEncodingException {
+		
 		User userInfo = new User(user.getUserId(), user.getPassword());
 		// 패스워드 검사
 		String token = userService.signInUser(userInfo);
+		
 		ReturnDefault msg = ReturnDefault.builder().code(Constant.RES.STATUS_OK.getCode())
 				.message(Constant.RES.STATUS_OK.getMessage()).result(new TokenDTO(token)).build();
+		
 		return new ResponseEntity<>(msg, HttpStatus.OK);
 	}
 }
