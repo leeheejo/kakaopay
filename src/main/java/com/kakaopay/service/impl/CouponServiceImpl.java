@@ -65,7 +65,6 @@ public class CouponServiceImpl implements CouponService {
 		coupon.setIssued(true);
 		coupon.setIssuedAt(LocalDateTime.now());
 		coupon.setUserId(userId);
-		couponRepo.save(coupon);
 		return coupon.getCoupon();
 	}
 
@@ -94,7 +93,6 @@ public class CouponServiceImpl implements CouponService {
 			throw new ExpiredCouponException(Constant.RES.EXPIRED_COUPON.getMessage());
 
 		c.setUsed(!currentUseStatus);
-		couponRepo.save(c);
 	}
 
 	@Override
