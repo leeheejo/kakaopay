@@ -58,7 +58,7 @@ public class UserControllerTests {
 		String id = "Id" + Timestamp.valueOf(LocalDateTime.now());
 		String pass = "pass123";
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		Map<String, String> map = new HashMap<>();
 		map.put("userId", id);
 		map.put("password", pass);
